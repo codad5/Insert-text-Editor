@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Text Editor</title>
+</head>
+<body data-editor-frame>
+    <button type="button" data-bold-btn>Bold</button>
+    <button type="button" data-bold-itl>Bold</button>
+    <button id="button" onclick="setCaret()">focus</button>
+	<div contenteditable="true" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
+		text text text<span>pext text texd</span> text text text<br>
+	</div>
+
+    <script>
+        const editor = document.querySelector('[data-editor-block]'), boldbtn = document.querySelector('[data-bold-btn]')
+        console.log(editor)
+        boldbtn.addEventListener('click', (e) => {
+            console.log(e)
+            console.log(editor.hasPointerCapture())
+        })
+        editor.addEventListener('input', (e) => {
+            console.log(e)
+        })
+        let test = editor.addEventListener('keyup', (e) => false)
+        let bold = new KeyboardEvent('keyup')
+        bold.code = "KeyB"
+        console.log(bold)
+        function setCaret() {
+            // var el = document.getElementById("editable")
+            var range = document.createRange()
+            var sel = window.getSelection()
+            console.log(editor.childNodes[1])
+            range.setStart(editor.childNodes[1], 0)
+            range.collapse(true)
+
+            sel.removeAllRanges()
+            sel.addRange(range)
+        }
+        </script>
+        <!-- <script src="script/main.js"></script> -->
+</body>
+</html>

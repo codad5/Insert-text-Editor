@@ -1,33 +1,27 @@
-class Editor {
-    constructor(){
-        this.states = {
-            bold:false,
-            italic:false,
-            underline:false
-        }
-        this.editorFrame = document.querySelector('[data-editor-frame]')
-        this.editorBlock = this.editorFrame.querySelector('[data-editor-block]')
-        this.boldBtn = this.editorFrame.querySelector('[data-editor-btn]')
-        this.underLineBtn = this.editorFrame.querySelector('[data-editor-btn]')
-        this.editorElement = {
-            bold:'b',
-            italic:'i',
-            underline:'u'
-        }
-    }
 
-    boldAction(){
-        
-    }
-    setCaret() {
-        
-        var range = document.createRange()
-        var sel = window.getSelection()
+const $ = (selector) => document.querySelector(selector)
+let i = 0, boldStatus = false
 
-        range.setStart(this.editorBlock.childNodes[this.editorBlock.childNodes.length -1 ], 5)
-        range.collapse(true)
+const  setCaret = () => {
+    var el = $('[data-editor-block]')
+    var range = document.createRange()
+    var sel = window.getSelection()
+    console.log(el.childNodes[el.childNodes.length - 1])
+    range.setStart(el.childNodes[el.childNodes.length - 1], el.childNodes[el.childNodes.length - 1].length + 2)
+    range.collapse(true)
 
-        sel.removeAllRanges()
-        sel.addRange(range)
-    }
+    sel.removeAllRanges()
+    sel.addRange(range)
 }
+$('[data-bold-btn]').addEventListener('click', (e) => {
+    boldStatus = !boldStatus
+    e.preventDefault()
+    console.log('hello')
+    $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
+    if(boldStatus) {
+
+        $('[data-editor-block]').innerHTML += `<b>&nbsp </b>`
+        $('[data-editor-block]').innerHTML += `<b>&nbsp </b>`
+    } 
+    setCaret();
+})

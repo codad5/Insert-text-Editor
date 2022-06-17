@@ -6,9 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
-    <div contenteditable="True" style="margin: auto;height: 500px;width: 50%;">
-    </div>
+<body data-editor-frame>
+    <button type="button" data-bold-btn>Bold</button>
+    <button type="button" data-bold-itl>Bold</button>
+    <button id="button" onclick="setCaret()">focus</button>
+	<div contenteditable="true" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
+		text text text<span>pext text texd</span> text text text<br>
+	</div>e
 
     <script src="script/main.js"></script>
 </body>

@@ -1,7 +1,22 @@
-
+// this is function i created to aid easy call of dom elements
+/**
+ * 
+ * @param {*} selector
+ * this is the selector value (element, className, id, data Attribute) of the  element to be selected
+ * @returns DOMElement
+ */
 const $ = (selector) => document.querySelector(selector)
+
+//boldStatus tell the application if bold is currently active or not
+//italicStatus tell the application if italic is currently active or not
+//underLineStatus tell the application if underLine is currently active or not
 let i = 0, boldStatus = false, italicStatus = false, underLineStatus = false
 
+/**
+ * This is a function that add a  new bold tag to the editor
+ * @param {*} e
+ * this is the event data of the action that is fired 
+ */
 const newBold = (e) => {
     boldStatus = !boldStatus
     let id = null
@@ -17,7 +32,11 @@ const newBold = (e) => {
     }
     setCaret(id == null ? null : `#b${id}`);
 }
-
+/**
+ * This is a function that add a  new italic tag to the editor
+ * @param {*} e
+ * this is the event data of the action that is fired 
+ */
 const newItalic = (e) => {
     italicStatus = !italicStatus
     let id = null
@@ -33,6 +52,11 @@ const newItalic = (e) => {
     }
     setCaret(id == null ? null : `#i${id}`);
 }
+/**
+ * 
+ * @param {String} selector
+ * This is the Node elemnt in which the cursor is meant to be at 
+ */
 const  setCaret = (selector = null) => {
     // var el = selector == null ? $('[data-editor-block]') : $('[data-editor-block]')
     var range = document.createRange()
@@ -50,9 +74,11 @@ const  setCaret = (selector = null) => {
     sel.removeAllRanges()
     sel.addRange(range)
 }
+// added event listener for the bold btn 
 $('[data-bold-btn]').addEventListener('click', newBold)
+//  Event listener for the italic button
 $('[data-bold-itl]').addEventListener('click', newItalic)
-
+// Event listener to keep track of default / built in commands like `Ctrl+B`
 $('[data-editor-block]').addEventListener('keydown', (event) => {
     // event.preventDefault();
     var name = event.key;
@@ -65,5 +91,5 @@ $('[data-editor-block]').addEventListener('keydown', (event) => {
     // alert(`Key pressed ${name} \r\n Key code value: ${code}`);
 }, false);
 
-
+// event lsitener to set focus to teh editor
 window.addEventListener('load', setCaret())

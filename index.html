@@ -4,14 +4,16 @@
 	<title>Text Editor</title>
 </head>
 <body data-editor-frame>
+    <!-- Some action button -->
     <button type="button" data-bold-btn>Bold</button>
     <button type="button" data-bold-itl>Italic</button>
     <button id="button" onclick="setCaret()">focus</button>
+    <!-- The editor -->
 	<div contenteditable="true" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
 		
 	</div>
-
-    <p>First paragraph.</p>
+    <!-- some test code below  -->
+    <!-- <p>First paragraph.</p>
     <p>Second paragraph.</p>
     <p>Third paragraph.</p>
     <p>Fourth paragraph.</p>
@@ -32,8 +34,9 @@
 
         // Add range to window selection
         selection.addRange(range);
-    </script>
-    
-        <script src="script/main.js"></script>
+    </script> -->
+
+<!-- The main script to run the editor -->
+<script src="script/main.js"></script>
 </body>
 </html>

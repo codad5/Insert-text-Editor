@@ -5,12 +5,34 @@
 </head>
 <body data-editor-frame>
     <button type="button" data-bold-btn>Bold</button>
-    <button type="button" data-bold-itl>Bold</button>
+    <button type="button" data-bold-itl>Italic</button>
     <button id="button" onclick="setCaret()">focus</button>
 	<div contenteditable="true" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
 		
 	</div>
 
+    <p>First paragraph.</p>
+    <p>Second paragraph.</p>
+    <p>Third paragraph.</p>
+    <p>Fourth paragraph.</p>
+    <script>
+        const paragraphs = document.querySelectorAll('p');
+
+        // Create new range
+        const range = new Range();
+
+        // Start range at second paragraph
+        range.setStartBefore(paragraphs[1]);
+
+        // End range at third paragraph
+        range.setEndAfter(paragraphs[2]);
+
+        // Get window selection
+        const selection = window.getSelection();
+
+        // Add range to window selection
+        selection.addRange(range);
+    </script>
     
         <script src="script/main.js"></script>
 </body>

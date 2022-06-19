@@ -23,13 +23,18 @@ const newBold = (e) => {
     e.preventDefault()
     console.log('hello')
     $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
+    let NodeType = "span",
+    para = document.createElement(NodeType);
     if (boldStatus) {
-        id = new Date().valueOf();
-        const para = document.createElement("b");
-        para.setAttribute("id", `b${id}`)
-        $('[data-editor-block]').appendChild(para);
+        NodeType = "b"
+        
         // $('[data-editor-block]').innerHTML += `<b>&nbsp </b>`
     }
+    id = new Date().valueOf();
+    para = document.createElement(NodeType);
+    para.setAttribute("id", `b${id}`)
+    para.appendChild(document.createTextNode("."))
+    $('[data-editor-block]').appendChild(para);
     setCaret(id == null ? null : `#b${id}`);
 }
 /**
@@ -43,13 +48,39 @@ const newItalic = (e) => {
     e.preventDefault()
     console.log('hello')
     $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
-    if (boldStatus) {
-        id = new Date().valueOf();
-        const para = document.createElement("i");
-        para.setAttribute("id", `i${id}`)
-        $('[data-editor-block]').appendChild(para);
-        // $('[data-editor-block]').innerHTML += `<b>&nbsp </b>`
+    let NodeType = "span",
+    para = document.createElement(NodeType);
+    if (italicStatus) {
+        NodeType = "i"
     }
+    id = new Date().valueOf();
+    para = document.createElement(NodeType);
+    para.setAttribute("id", `i${id}`)
+    para.appendChild(document.createTextNode("."))
+    $('[data-editor-block]').appendChild(para);
+    setCaret(id == null ? null : `#i${id}`);
+}
+/**
+ * This is a function that add a  new italic tag to the editor
+ * @param {*} e
+ * this is the event data of the action that is fired 
+ */
+const newUnderLine = (e) => {
+    underLineStatus = !underLineStatus
+    let id = null
+    e.preventDefault()
+    console.log('hello')
+    $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
+    let NodeType = "span",
+    para = document.createElement(NodeType);
+    if (underLineStatus) {
+        NodeType = "u"
+    }
+    id = new Date().valueOf();
+    para = document.createElement(NodeType);
+    para.setAttribute("id", `i${id}`)
+    para.appendChild(document.createTextNode("."))
+    $('[data-editor-block]').appendChild(para);
     setCaret(id == null ? null : `#i${id}`);
 }
 /**
@@ -61,23 +92,27 @@ const  setCaret = (selector = null) => {
     // var el = selector == null ? $('[data-editor-block]') : $('[data-editor-block]')
     var range = document.createRange()
     var sel = window.getSelection(), 
-        startNode = selector == null ? $('[data-editor-block]') : $(selector)
+        startNode = selector == null ? $('[data-editor-block]') : $('[data-editor-block]').querySelector(selector)
     // startNode = selector == null ? $('[data-editor-block]') : startNode[startNode.length - 1]
-    console.log(startNode.childNodes, startNode.childNodes.length, startNode)
-    range.setStart($('[data-editor-block]'), 0)
-    range.setStartAfter($('[data-editor-block]').childNodes[$('[data-editor-block]').childNodes.length - 1])
+    // console.log(startNode.childNodes, startNode.childNodes.length, startNode)
+    range.setStart(startNode, 0)
+    range.setEnd(startNode, 1)
+    console.log(range)
+    // range.setStartAfter($('[data-editor-block]').childNodes[$('[data-editor-block]').childNodes.length - 1])
     
     // range.setEnd(el.childNodes[el.childNodes.length - 1], 0)
     console.log(range.toString())
-    range.collapse(true)
+    range.collapse(false)
     console.log(range.toString())
     sel.removeAllRanges()
     sel.addRange(range)
 }
 // added event listener for the bold btn 
-$('[data-bold-btn]').addEventListener('click', newBold)
+$('[data-btn-bold]').addEventListener('click', newBold)
 //  Event listener for the italic button
-$('[data-bold-itl]').addEventListener('click', newItalic)
+$('[data-btn-itl]').addEventListener('click', newItalic)
+//  Event listener for the underline button
+$('[data-btn-und]').addEventListener('click', newUnderLine)
 // Event listener to keep track of default / built in commands like `Ctrl+B`
 $('[data-editor-block]').addEventListener('keydown', (event) => {
     // event.preventDefault();

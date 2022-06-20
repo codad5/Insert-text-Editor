@@ -7,9 +7,25 @@
  */
 const $ = (selector) => document.querySelector(selector)
 
+const editorTemplate = `
+    <!-- Some action button -->
+    <button type="button" data-btn-bold>Bold</button>
+    <button type="button" data-btn-itl>Italic</button>
+    <button type="button" data-btn-und>Underline</button>
+    <!-- The editor -->
+	<div contenteditable="true" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
+		
+	</div>
+`;
+
+// inserting the editor into the right frame 
+$('[data-editor-frame]').innerHTML = editorTemplate
+
+
 //boldStatus tell the application if bold is currently active or not
 //italicStatus tell the application if italic is currently active or not
 //underLineStatus tell the application if underLine is currently active or not
+
 let i = 0, boldStatus = false, italicStatus = false, underLineStatus = false
 
 /**
@@ -18,24 +34,10 @@ let i = 0, boldStatus = false, italicStatus = false, underLineStatus = false
  * this is the event data of the action that is fired 
  */
 const newBold = (e) => {
-    boldStatus = !boldStatus
-    let id = null
     e.preventDefault()
-    console.log('hello')
-    $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
-    let NodeType = "span",
-    para = document.createElement(NodeType);
-    if (boldStatus) {
-        NodeType = "b"
-        
-        // $('[data-editor-block]').innerHTML += `<b>&nbsp </b>`
-    }
-    id = new Date().valueOf();
-    para = document.createElement(NodeType);
-    para.setAttribute("id", `b${id}`)
-    para.appendChild(document.createTextNode("."))
-    $('[data-editor-block]').appendChild(para);
-    setCaret(id == null ? null : `#b${id}`);
+    const { selector, newStatus } = newNodeCreator(boldStatus, 'b')
+    boldStatus = newStatus
+    setCaret(selector == null ? null : `#${selector}`);
 }
 /**
  * This is a function that add a  new italic tag to the editor
@@ -43,22 +45,10 @@ const newBold = (e) => {
  * this is the event data of the action that is fired 
  */
 const newItalic = (e) => {
-    italicStatus = !italicStatus
-    let id = null
     e.preventDefault()
-    console.log('hello')
-    $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
-    let NodeType = "span",
-    para = document.createElement(NodeType);
-    if (italicStatus) {
-        NodeType = "i"
-    }
-    id = new Date().valueOf();
-    para = document.createElement(NodeType);
-    para.setAttribute("id", `i${id}`)
-    para.appendChild(document.createTextNode("."))
-    $('[data-editor-block]').appendChild(para);
-    setCaret(id == null ? null : `#i${id}`);
+    const { selector, newStatus  } = newNodeCreator(italicStatus, 'i')
+    italicStatus = newStatus
+    setCaret(selector == null ? null : `#${selector}`);
 }
 /**
  * This is a function that add a  new italic tag to the editor
@@ -66,22 +56,47 @@ const newItalic = (e) => {
  * this is the event data of the action that is fired 
  */
 const newUnderLine = (e) => {
-    underLineStatus = !underLineStatus
-    let id = null
     e.preventDefault()
-    console.log('hello')
+    const { selector, newStatus, parentNode } = newNodeCreator(underLineStatus, 'u')
+    underLineStatus = newStatus
+    console.log(parentNode)
+    setCaret(selector == null ? null : `#${selector}`);
+    console.log(parentNode)
+} 
+
+// const getNodeType
+/**
+ * 
+ * @param {Boolean} NodeBol
+ * This is a boolean vealue to tell if the status of a given command (bold, italic , unserline) is to be turned on or off 
+ * @param {String} NodeTypeModel 
+ * This is a string of the new DOMELEMENT type
+ * @returns Json
+ */
+const newNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
+    const currentNodeActive = window.getSelection().baseNode.parentNode
+    console.log(currentNodeActive)
+    NodeBol = !NodeBol
+    let id = null
+    // e.preventDefault()
+    // console.log('hello')
     $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
+    NodeTypeModel = NodeTypeModel.toLowerCase().trim();
     let NodeType = "span",
     para = document.createElement(NodeType);
-    if (underLineStatus) {
-        NodeType = "u"
+    if (NodeBol) {
+        NodeType = NodeTypeModel
     }
+    console.log(NodeType);
     id = new Date().valueOf();
     para = document.createElement(NodeType);
-    para.setAttribute("id", `i${id}`)
-    para.appendChild(document.createTextNode("."))
-    $('[data-editor-block]').appendChild(para);
-    setCaret(id == null ? null : `#i${id}`);
+    para.setAttribute("id", `${NodeType.charAt(0)}${id}`)
+    // para.appendChild(document.createTextNode("&nbsp;"))
+    currentNodeActive.appendChild(para);
+    console.log(currentNodeActive)
+    para.innerHTML = "&nbsp;"
+    console.log(para, currentNodeActive)
+    return { selector: `${NodeType.charAt(0)}${id}`, parentNode: currentNodeActive, node: para, newStatus: NodeBol}
 }
 /**
  * 
@@ -89,24 +104,36 @@ const newUnderLine = (e) => {
  * This is the Node elemnt in which the cursor is meant to be at 
  */
 const  setCaret = (selector = null) => {
-    // var el = selector == null ? $('[data-editor-block]') : $('[data-editor-block]')
-    var range = document.createRange()
-    var sel = window.getSelection(), 
-        startNode = selector == null ? $('[data-editor-block]') : $('[data-editor-block]').querySelector(selector)
-    // startNode = selector == null ? $('[data-editor-block]') : startNode[startNode.length - 1]
-    // console.log(startNode.childNodes, startNode.childNodes.length, startNode)
+    console.log(document.querySelector(selector))
+    let startNode = selector == null ? $('[data-editor-block]') : $('[data-editor-block]').querySelector(selector)
+    startNode = startNode == null ? $('[data-editor-block]').lastChild : startNode
+    console.log(startNode, document.querySelector(selector), selector)
+    let range = document.createRange(),
+    sel = window.getSelection() 
     range.setStart(startNode, 0)
     range.setEnd(startNode, 1)
-    console.log(range)
-    // range.setStartAfter($('[data-editor-block]').childNodes[$('[data-editor-block]').childNodes.length - 1])
-    
-    // range.setEnd(el.childNodes[el.childNodes.length - 1], 0)
-    console.log(range.toString())
     range.collapse(false)
-    console.log(range.toString())
+    // console.log(range.toString())
     sel.removeAllRanges()
     sel.addRange(range)
+
 }
+
+function getSelectionStart() {
+    var node = document.getSelection().anchorNode;
+    console.log(node, window.getSelection().baseNode)
+    // console.log(node?.nodeType)
+    return (node?.nodeType !== 3 ? node?.parentNode : node);
+}
+
+
+
+window.addEventListener('load', () => {
+   
+})
+
+// Creating auto focus on the editor
+setCaret()
 // added event listener for the bold btn 
 $('[data-btn-bold]').addEventListener('click', newBold)
 //  Event listener for the italic button
@@ -120,11 +147,9 @@ $('[data-editor-block]').addEventListener('keydown', (event) => {
     var code = event.code;
     // console.log(event)
     // Alert the key name and key code on keydown
-    if(code == 'KeyB' && event.ctrlKey) boldStatus = !boldStatus
+    if (code == 'KeyB' && event.ctrlKey) boldStatus = !boldStatus
     if (code == 'KeyI' && event.ctrlKey) italicStatus = !italicStatus
     if (code == 'KeyU' && event.ctrlKey) underLineStatus = !underLineStatus
     // alert(`Key pressed ${name} \r\n Key code value: ${code}`);
 }, false);
 
-// event lsitener to set focus to teh editor
-window.addEventListener('load', setCaret())

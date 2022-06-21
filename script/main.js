@@ -35,7 +35,7 @@ let i = 0, boldStatus = false, italicStatus = false, underLineStatus = false
  */
 const newBold = (e) => {
     e.preventDefault()
-    const { selector, newStatus } = newNodeCreator(boldStatus, 'b')
+    const { selector, newStatus } = newInlineNodeCreator(boldStatus, 'b')
     boldStatus = newStatus
     setCaret(selector == null ? null : `#${selector}`);
 }
@@ -46,8 +46,9 @@ const newBold = (e) => {
  */
 const newItalic = (e) => {
     e.preventDefault()
-    const { selector, newStatus  } = newNodeCreator(italicStatus, 'i')
+    const { selector, newStatus  } = newInlineNodeCreator(italicStatus, 'i')
     italicStatus = newStatus
+    console.log(document.querySelector(selector))
     setCaret(selector == null ? null : `#${selector}`);
 }
 /**
@@ -57,7 +58,7 @@ const newItalic = (e) => {
  */
 const newUnderLine = (e) => {
     e.preventDefault()
-    const { selector, newStatus, parentNode } = newNodeCreator(underLineStatus, 'u')
+    const { selector, newStatus, parentNode } = newInlineNodeCreator(underLineStatus, 'u')
     underLineStatus = newStatus
     console.log(parentNode)
     setCaret(selector == null ? null : `#${selector}`);
@@ -73,8 +74,8 @@ const newUnderLine = (e) => {
  * This is a string of the new DOMELEMENT type
  * @returns Json
  */
-const newNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
-    const currentNodeActive = window.getSelection().baseNode.parentNode
+const newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
+    const currentNodeActive =  window.getSelection()?.anchorNode.parentNode
     console.log(currentNodeActive)
     NodeBol = !NodeBol
     let id = null

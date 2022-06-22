@@ -5,16 +5,20 @@
  * this is the selector value (element, className, id, data Attribute) of the  element to be selected
  * @returns DOMElement
  */
-const $ = (selector) => document.querySelector(selector)
-
+const $ = (selector) => document.querySelector(selector),
+noRootNode = ['p', 'div']
 const editorTemplate = `
     <!-- Some action button -->
     <button type="button" data-btn-bold>Bold</button>
     <button type="button" data-btn-itl>Italic</button>
     <button type="button" data-btn-und>Underline</button>
+    <button type="button" data-btn-prg>Paragraph</button>
+    <button type="button" data-btn-align="left">Text align left</button>
+    <button type="button" data-btn-align="right">Text align right</button>
+    <button type="button" data-btn-align="center">Text align center</button>
     <!-- The editor -->
 	<div contenteditable="true" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
-		
+		 
 	</div>
 `;
 
@@ -48,7 +52,6 @@ const newItalic = (e) => {
     e.preventDefault()
     const { selector, newStatus  } = newInlineNodeCreator(italicStatus, 'i')
     italicStatus = newStatus
-    console.log(document.querySelector(selector))
     setCaret(selector == null ? null : `#${selector}`);
 }
 /**
@@ -60,10 +63,47 @@ const newUnderLine = (e) => {
     e.preventDefault()
     const { selector, newStatus, parentNode } = newInlineNodeCreator(underLineStatus, 'u')
     underLineStatus = newStatus
-    console.log(parentNode)
     setCaret(selector == null ? null : `#${selector}`);
-    console.log(parentNode)
 } 
+/**
+ * This is a function that add a  new paragraph tag to the editor
+ * @param {*} e
+ * this is the event data of the action that is fired 
+ */
+const newParagraph = (e) => {
+    e.preventDefault()
+    const { selector, newStatus, parentNode } = newInlineNodeCreator(null, 'p')
+    // underLineStatus = newStatus
+    setCaret(selector == null ? null : `#${selector}`);
+} 
+const alignText = (e) => {
+    let position = e.target.getAttribute('data-btn-align')
+    console.log(position)
+    let currentNodeActive = window.getSelection()?.anchorNode.parentNode
+    console.log(currentNodeActive)
+    addStyle(currentNodeActive, {
+        textAlign: position,
+        display: "inline-block",
+        width:"100%"
+    })
+}
+
+// for adding styling 
+const addStyle = (domElement, style) => {
+    let prevStyle = domElement.style
+    console.log(prevStyle)
+    console.log(style)
+    
+    
+    for (var key in style) {
+        prevStyle[key] = style[key];
+    
+        console.log(prevStyle[key])
+        // prevStyle[key] = value
+    }
+    // domElement.style = prevStyle;
+    // console.log(domElement.style)
+}
 
 // const getNodeType
 /**
@@ -75,7 +115,7 @@ const newUnderLine = (e) => {
  * @returns Json
  */
 const newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
-    const currentNodeActive =  window.getSelection()?.anchorNode.parentNode
+    let currentNodeActive =  window.getSelection()?.anchorNode.parentNode
     console.log(currentNodeActive)
     NodeBol = !NodeBol
     let id = null
@@ -83,19 +123,22 @@ const newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
     // console.log('hello')
     $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
     NodeTypeModel = NodeTypeModel.toLowerCase().trim();
-    let NodeType = "span",
+    let NodeType = "div",
     para = document.createElement(NodeType);
-    if (NodeBol) {
+    if (NodeBol || NodeBol == null) {
         NodeType = NodeTypeModel
     }
+    if (noRootNode.includes(NodeType)) currentNodeActive = $('[data-editor-block]')
     console.log(NodeType);
     id = new Date().valueOf();
     para = document.createElement(NodeType);
     para.setAttribute("id", `${NodeType.charAt(0)}${id}`)
     // para.appendChild(document.createTextNode("&nbsp;"))
+    if (noRootNode.includes(NodeType)) currentNodeActive = $('[data-editor-block]')
     currentNodeActive.appendChild(para);
+    // currentNodeActive.innerHTML += para
     console.log(currentNodeActive)
-    para.innerHTML = "&nbsp;"
+    para.innerHTML = "&nbsp; <span></span>"
     console.log(para, currentNodeActive)
     return { selector: `${NodeType.charAt(0)}${id}`, parentNode: currentNodeActive, node: para, newStatus: NodeBol}
 }
@@ -105,7 +148,7 @@ const newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
  * This is the Node elemnt in which the cursor is meant to be at 
  */
 const  setCaret = (selector = null) => {
-    console.log(document.querySelector(selector))
+    // console.log(document.querySelector(selector))
     let startNode = selector == null ? $('[data-editor-block]') : $('[data-editor-block]').querySelector(selector)
     startNode = startNode == null ? $('[data-editor-block]').lastChild : startNode
     console.log(startNode, document.querySelector(selector), selector)
@@ -117,6 +160,7 @@ const  setCaret = (selector = null) => {
     // console.log(range.toString())
     sel.removeAllRanges()
     sel.addRange(range)
+    // sel.removeAllRanges()
 
 }
 
@@ -141,6 +185,13 @@ $('[data-btn-bold]').addEventListener('click', newBold)
 $('[data-btn-itl]').addEventListener('click', newItalic)
 //  Event listener for the underline button
 $('[data-btn-und]').addEventListener('click', newUnderLine)
+//  Event listener for the new paragraph button
+$('[data-btn-prg]').addEventListener('click', newParagraph)
+//  Event listener for the align button
+// $('[data-btn-align]').addEventListener('click', alignText)
+document.querySelectorAll('[data-btn-align]').forEach(item => {
+    item.addEventListener('click', alignText)
+})
 // Event listener to keep track of default / built in commands like `Ctrl+B`
 $('[data-editor-block]').addEventListener('keydown', (event) => {
     // event.preventDefault();

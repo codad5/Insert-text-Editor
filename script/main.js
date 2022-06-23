@@ -1,11 +1,5 @@
 var editor= document.getElementById('editor');
-// var textNode= document.createTextNode();
-// var editorevent=editor.addEventListener("keypress",getInnerHtml);
-// function getInnerHtml(){
-//     var editorarray=[]
-//     editorarray.push(editor.innerHTML)
-//     return editorarray
-// }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var heading=['p','h1','h2','h3','h4','h5','h6'].map((i)=>document.createElement(i))
 var texttags=['b','u','i','br','hr','strong','em','pre','acronym','samp','var','cite','address','blockquote','bdo','ins','del','dfn','kdb','footer','header','frameset','frame','html'].map((i,z)=>document.createElement )
 // var linkTag=['a','base'].map((i)=>document.createElement(i).appendChild(textNode))
@@ -14,6 +8,7 @@ var listtag=['ul','ol','li','dl','dt','dd'].map((i)=>document.createElement(i))
 var TableTag=['table','tr','td','th','tbody','thead','tfoot','col','colgroup','caption'].map((i)=>document.createElement(i))
 var formTag=['form','input','textarea','select','option','optgroup','button','label','fieldset','legend'].map((i)=>document.createElement(i))
 var scripTag=['script','noscript'].map((i)=>document.createElement(i))
+var containerTags=['div'].map((i)=>document.createElement(i))
 
 
 const features={
@@ -24,9 +19,10 @@ const features={
     listTags:listtag,
     tableTags:TableTag,
     formTags:formTag,
-    scriptTags:scripTag
+    scriptTags:scripTag,
+    containerTags:containerTags
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 let format= new function(){
     
@@ -47,38 +43,134 @@ let format= new function(){
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-var parag=document.createElement('p')
-parag.className='jerry'
-var parac=document.createTextNode([stuffs? stuffs:'.'])
-parag.appendChild(parac)
-var stuffs=editor.innerHTML
-
-editor.addEventListener('keypress',()=>editor.appendChild(parag))
-document.getElementById('bold').addEventListener('click',console.log(editor.childNodes[1]))
-
-let nodeCreation=new function(){
-
-        this.generateNode=(name,Number)=>editor.appendChild(features[name][Number]);
-        
-        
-
-}
-// document.getElementById('bold').addEventListener('click',nodeCreation.generateNode('headingTag',2))
-// console.log(nodeCreation.generateNode('heading',2))
-
-// console.log(features['heading'])
-
-// function bold(){
-//     var result=getInnerHtml()
-//     var resultinarray=document.createTextNode(result[0])
-//     var boldNode=document.createElement("b")
+function generateNode(name,number){
+    
+    var id=Math.random()
+    var node=features[name][number]
+    node.setAttribute('id',id)
+    editor.append(node)
+    console.log('yes')
     
 
-//     boldNode.appendChild(resultinarray)
-//     console.log(boldNode)
-//     editor.appendChild(boldNode)
-// }
+
+}
+document.getElementById('bold').addEventListener('click',()=>generateNode('containerTags',0))
+function generateOtherNodes(name,number){
+    var id=Math.random()
+    var node=features[name][number]
+    node.setAttribute('id',id)
+    var last_element_index=editor.childNodes.length-1
+    var last_node=editor.childNodes[last_element_index]
+    var grab_the_last_node=document.getElementById(`${last_node.id}`)
+    node=grab_the_last_node.appendChild(node) //appending to the last node in the first level.
+    return node
+
+}
+
+function insertlast(){
+    var last_element_index=editor.childNodes.length-1
+    var last_node=editor.childNodes[last_element_index]
+    var grab_the_last_node=document.getElementById(`${last_node.id}`)
+    var createTheNOde=document.createElement('p')
+    grab_the_last_node.appendChild(createTheNOde)  //appending to the last node in the first level.
+    console.log(grab_the_last_node.childNodes)
+
+}
+function insertBefore(){
+    var first_node=editor.childNodes[1]
+    console.log(first_node)
+    var grab_the_first_node=document.getElementById(`${first_node.id}`)
+    var createTheNOde=document.createElement('hr')
+    grab_the_first_node.appendChild(createTheNOde)  //appending to the first node in the first level.
+    console.log(grab_the_first_node.childNodes)
+}
+
+function insertChoice(number){
+    if (-1<number<editor.childNodes.length-1){
+    var choice_node=editor.childNodes[number]
+    var grab_the_choice_node=document.getElementById(`${choice_node.id}`)
+    var createTheNOde=document.createElement('a')
+    grab_the_choice_node.appendChild(createTheNOde)  //appending to the choice node in the first level.
+    }
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+let nodeCreation=new function(){
+        this.rootNode=generateNode;
+        this.otherNode=generateOtherNodes;
+}
+
+// a=nodeCreation
+// a.rootNode('containerTags',0)
+// a.rootNode('headingTag',0)
+// a.rootNode('scriptTags',0)
+
+// a.otherNode('headingTag',0)
+generateNode('containerTags',0)
+generateNode('headingTag',0)
+// generateNode('containerTags',0)
+insertlast()
+insertlast()
+insertlast()
+insertlast()
+insertBefore()
+insertlast()
+insertChoice(number=Number(2))
+insertlast()
+insertlast()
+insertlast()
+// console.log(nodeCreation.parameters)
+// document.getElementById('bold').addEventListener('click',nodeCreation.generateNode('containerTags',0))
+// console.log(features[containerTags][0])
+// console.log(nodeCreation.generateNode('heading',2)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Editor{
+
+    constructor(editor,features,format){
+        this.editor=editor
+        this.features=features
+        this.format=format
+}
+
+    generateFirstLevelNode(name,index){
+        var id=new Date().valueOf()
+        var node=this.features[name][index]
+        node.setAttribute('id',id)
+        var node=editor.appendChild(node)
+    
+    return node
+
+}
+    insertlast(name,index){
+        var last_element_index=this.editor.childNodes.length-1
+        var last_node=editor.childNodes[last_element_index]
+        var grab_the_last_node=document.getElementById(`${last_node.id}`)
+        var createTheNOde=this.features[name][index]
+        grab_the_last_node.appendChild(createTheNOde)  
+    return
+
+}
+    insertBefore(name,index){
+        var first_node=this.editor.childNodes[1]
+        var grab_the_first_node=document.getElementById(`${first_node.id}`)
+        var createTheNOde=this.features[name][index]
+        grab_the_first_node.appendChild(createTheNOde)  //
+    return
+}
+    insertChoice(number,name,index){
+        if (-1<number<editor.childNodes.length-1){
+            var choice_node=this.editor.childNodes[number]
+            var grab_the_choice_node=document.getElementById(`${choice_node.id}`)
+            var createTheNOde=this.features[name][index]
+            grab_the_choice_node.appendChild(createTheNOde) 
+    }
+
+}
+
+}

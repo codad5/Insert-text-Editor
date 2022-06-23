@@ -1,6 +1,6 @@
 var editor= document.getElementById('editor');
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var heading=['p','h1','h2','h3','h4','h5','h6'].map((i)=>document.createElement(i))
+let heading=['p','h1','h2','h3','h4','h5','h6'].map((i)=>document.createElement(i))
 var texttags=['b','u','i','br','hr','strong','em','pre','acronym','samp','var','cite','address','blockquote','bdo','ins','del','dfn','kdb','footer','header','frameset','frame','html'].map((i,z)=>document.createElement )
 // var linkTag=['a','base'].map((i)=>document.createElement(i).appendChild(textNode))
 var ImagObjTag=['img','area','map','param','object','video'].map((i)=>document.createElement(i))
@@ -8,7 +8,7 @@ var listtag=['ul','ol','li','dl','dt','dd'].map((i)=>document.createElement(i))
 var TableTag=['table','tr','td','th','tbody','thead','tfoot','col','colgroup','caption'].map((i)=>document.createElement(i))
 var formTag=['form','input','textarea','select','option','optgroup','button','label','fieldset','legend'].map((i)=>document.createElement(i))
 var scripTag=['script','noscript'].map((i)=>document.createElement(i))
-var containerTags=['div'].map((i)=>document.createElement(i))
+let containerTags=['div'].map((i)=>document.createElement(i))
 
 
 const features={
@@ -46,9 +46,46 @@ let format= new function(){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function generateNode(name,number){
+
     
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    let heading=['p','h1','h2','h3','h4','h5','h6'].map((i)=>document.createElement(i))
+    var texttags=['b','u','i','br','hr','strong','em','pre','acronym','samp','var','cite','address','blockquote','bdo','ins','del','dfn','kdb','footer','header','frameset','frame','html'].map((i,z)=>document.createElement )
+    // var linkTag=['a','base'].map((i)=>document.createElement(i).appendChild(textNode))
+    var ImagObjTag=['img','area','map','param','object','video'].map((i)=>document.createElement(i))
+    var listtag=['ul','ol','li','dl','dt','dd'].map((i)=>document.createElement(i))
+    var TableTag=['table','tr','td','th','tbody','thead','tfoot','col','colgroup','caption'].map((i)=>document.createElement(i))
+    var formTag=['form','input','textarea','select','option','optgroup','button','label','fieldset','legend'].map((i)=>document.createElement(i))
+    var scripTag=['script','noscript'].map((i)=>document.createElement(i))
+    let containerTags=['div'].map((i)=>document.createElement(i))
+    
+
+
+
+
+
+
+
+    
+    const feature={
+        headingTag:heading,
+        textTags:texttags,
+        // linkTags:linkTag,
+        ImageAndVideoTags:ImagObjTag,
+        listTags:listtag,
+        tableTags:TableTag,
+        formTags:formTag,
+        scriptTags:scripTag,
+        containerTags:containerTags
+    }
+
+
+
+
+
+
     var id=Math.random()
-    var node=features[name][number]
+    var node=feature[name][number]
     node.setAttribute('id',id)
     editor.append(node)
     console.log('yes')
@@ -56,7 +93,10 @@ function generateNode(name,number){
 
 
 }
-document.getElementById('bold').addEventListener('click',()=>generateNode('containerTags',0))
+function blow(){
+    editor.append(document.createElement('div'))
+}
+
 function generateOtherNodes(name,number){
     var id=Math.random()
     var node=features[name][number]
@@ -78,12 +118,45 @@ function insertlast(){
     console.log(grab_the_last_node.childNodes)
 
 }
-function insertBefore(){
+function insertBefore(name,index){
+ 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    let heading=['p','h1','h2','h3','h4','h5','h6'].map((i)=>document.createElement(i))
+    var texttags=['b','u','i','br','hr','strong','em','pre','acronym','samp','var','cite','address','blockquote','bdo','ins','del','dfn','kdb','footer','header','frameset','frame','html'].map((i,z)=>document.createElement )
+    // var linkTag=['a','base'].map((i)=>document.createElement(i).appendChild(textNode))
+    var ImagObjTag=['img','area','map','param','object','video'].map((i)=>document.createElement(i))
+    var listtag=['ul','ol','li','dl','dt','dd'].map((i)=>document.createElement(i))
+    var TableTag=['table','tr','td','th','tbody','thead','tfoot','col','colgroup','caption'].map((i)=>document.createElement(i))
+    var formTag=['form','input','textarea','select','option','optgroup','button','label','fieldset','legend'].map((i)=>document.createElement(i))
+    var scripTag=['script','noscript'].map((i)=>document.createElement(i))
+    let containerTags=['div'].map((i)=>document.createElement(i))
+    
+
+
+
+
+
+
+
+    
+    const feature={
+        headingTag:heading,
+        textTags:texttags,
+        // linkTags:linkTag,
+        ImageAndVideoTags:ImagObjTag,
+        listTags:listtag,
+        tableTags:TableTag,
+        formTags:formTag,
+        scriptTags:scripTag,
+        containerTags:containerTags
+    }
+
     var first_node=editor.childNodes[1]
     console.log(first_node)
     var grab_the_first_node=document.getElementById(`${first_node.id}`)
-    var createTheNOde=document.createElement('hr')
-    grab_the_first_node.appendChild(createTheNOde)  //appending to the first node in the first level.
+    var createTheNOde=feature[name][index]
+    //appending to the first node in the first level.
+    grab_the_first_node.appendChild(createTheNOde)
     console.log(grab_the_first_node.childNodes)
 }
 
@@ -97,13 +170,16 @@ function insertChoice(number){
 
 }
 
+
+document.getElementById('bold').addEventListener('click',()=>generateNode('containerTags',0))
+document.getElementById('bolda').addEventListener('click',()=>insertBefore('headingTag',0))
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-let nodeCreation=new function(){
-        this.rootNode=generateNode;
-        this.otherNode=generateOtherNodes;
-}
+// let nodeCreation=new function(){
+//         this.rootNode=generateNode;
+//         this.otherNode=generateOtherNodes;
+// }
 
 // a=nodeCreation
 // a.rootNode('containerTags',0)
@@ -111,20 +187,20 @@ let nodeCreation=new function(){
 // a.rootNode('scriptTags',0)
 
 // a.otherNode('headingTag',0)
-generateNode('containerTags',0)
-generateNode('headingTag',0)
 // generateNode('containerTags',0)
-insertlast()
-insertlast()
-insertlast()
-insertlast()
-insertBefore()
-insertlast()
-insertChoice(number=Number(2))
-insertlast()
-insertlast()
-insertlast()
-// console.log(nodeCreation.parameters)
+// generateNode('headingTag',0)
+// generateNode('containerTags',0)
+// insertlast()
+// insertlast()
+// insertlast()
+// insertlast()
+// insertBefore()
+// insertlast()
+// insertChoice(number=Number(2))
+// insertlast()
+// insertlast()
+// insertlast()
+// // console.log(nodeCreation.parameters)
 // document.getElementById('bold').addEventListener('click',nodeCreation.generateNode('containerTags',0))
 // console.log(features[containerTags][0])
 // console.log(nodeCreation.generateNode('heading',2)

@@ -93,13 +93,30 @@ const addColor = (e) => {
     let color = e.target.value;
     let highlighted = false, _selector
     console.log(color)
+    console.log(window.getSelection().toString().trim().length)
+    if (window.getSelection().toString().trim() !== "" || window.getSelection().toString().trim().length > 0) highlighted = true 
+    console.log(highlighted)
     if(!highlighted) {
         const { selector, newStatus, parentNode } = newInlineNodeCreator(null, 'span')
         _selector = selector
     }
+    else{
+        let parentNode = window.getSelection().anchorNode.parentNode
+        let childNode = window.getSelection().anchorNode,
+        _text = childNode.textContent,
+            id = new Date().valueOf()
+        para = document.createElement('span');
+        para.setAttribute('id', `s${id}`)
+        // const { selector, newStatus } = newInlineNodeCreator(null, 'span')
+        _selector = `s${id}`
+        childNode.replaceWith(para)
+        para.innerHTML = _text
+        
+    }
     addStyle($(`#${_selector}`),{
         color: color
     })
+    highlighted ? setCaret() : setCaret(`#${_selector}`)
 }
 // for adding styling 
 const addStyle = (domElement, style) => {
@@ -116,6 +133,10 @@ const addStyle = (domElement, style) => {
     }
     // domElement.style = prevStyle;
     // console.log(domElement.style)
+}
+
+const createHighlighedParentNode = () => {
+    let highlightedNode = window.getSelection().anchorNode
 }
 
 // const getNodeType

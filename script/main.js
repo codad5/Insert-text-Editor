@@ -16,6 +16,7 @@ const editorTemplate = `
     <button type="button" data-btn-align="left">Text align left</button>
     <button type="button" data-btn-align="right">Text align right</button>
     <button type="button" data-btn-align="center">Text align center</button>
+    <input type="color" data-btn-color value="#000000" />
     <!-- The editor -->
 	<div contenteditable="true" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
 		 
@@ -88,6 +89,18 @@ const alignText = (e) => {
     })
 }
 
+const addColor = (e) => {
+    let color = e.target.value;
+    let highlighted = false, _selector
+    console.log(color)
+    if(!highlighted) {
+        const { selector, newStatus, parentNode } = newInlineNodeCreator(null, 'span')
+        _selector = selector
+    }
+    addStyle($(`#${_selector}`),{
+        color: color
+    })
+}
 // for adding styling 
 const addStyle = (domElement, style) => {
     let prevStyle = domElement.style
@@ -192,6 +205,8 @@ $('[data-btn-prg]').addEventListener('click', newParagraph)
 document.querySelectorAll('[data-btn-align]').forEach(item => {
     item.addEventListener('click', alignText)
 })
+
+$('[data-btn-color]').addEventListener('change', addColor)
 // Event listener to keep track of default / built in commands like `Ctrl+B`
 $('[data-editor-block]').addEventListener('keydown', (event) => {
     // event.preventDefault();

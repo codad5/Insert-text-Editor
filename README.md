@@ -54,6 +54,6 @@ The `index.html` is not to be edited as it is just a template
 
 The `script` directory is an old directory it can be ignored
 ##### Todos
-- [] Style The Editor 
-- [] Fix Highlighed Coloring Bug
-- [] Add Media Insertion Feature
+- [ ] Style The Editor 
+- [ ] Fix Highlighed Coloring Bug
+- [ ] Add Media Insertion Feature

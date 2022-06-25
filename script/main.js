@@ -93,6 +93,29 @@ let features={
             grab_the_last_node.appendChild(createTheNOde)  
         }
         elif(name=='listTags'){
+            
+        function createListTag(){
+            let id=new Date().valueOf()
+  
+            let b=document.createElement('ul')
+            b.setAttribute('id',id)
+            editor.appendChild(b)
+            li(id,1)
+
+
+
+
+}
+        function li(id,no){
+        var grab_the_node=document.getElementById(id)
+        for(let i=0;i<no;i++){
+                var created_element=document.createElement('li')
+                grab_the_node.appendChild(created_element)
+        }
+
+
+}
+createListTag()
 
 
         }

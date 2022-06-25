@@ -1,0 +1,296 @@
+// this is function i created to aid easy call of dom elements
+/**
+ * 
+ * @param {*} selector
+ * this is the selector value (element, className, id, data Attribute) of the  element to be selected
+ * @returns DOMElement
+ */
+const $ = (selector) => document.querySelector(selector)
+/**
+ * 
+ * @param {*} editorNode This is the Overall Parent Node in which the editor companent are inserted into
+ */
+function InsertEditor(editorNode) {
+    /**
+     * This is list of all dom elememt
+     */
+    this.domNodeTemplate = {
+        p:'p',
+        div:'div',
+        i:'i',
+        italic:'i',
+        b:'b',
+        bold:'b'
+    }
+    /**
+     * this is the to know the status of the bold 
+     */
+    this.boldStatus = false
+    /**
+     * This is to know the status of the editor italic
+     */
+    this.italicStatus = false
+    /**
+     * This is to  know the status of the underline
+     */
+    this.underLineStatus = 
+    /**
+     * This are element which require no root Node 
+     */
+    this.noRootNode = ['p', 'div']
+    /**
+     * this are element that must be created with a child appended to  it
+     */
+    this.mustHaveChild = ['ul', 'ol']
+    /**
+     * This is a json containg the child for each element  in mustHaveChild
+     */
+    this.childNeeded = {
+        'ul':'li',
+        'ol':'li',
+    }
+    /**
+     * This is overall parentNode which all the editor features are apppended to
+     */
+    this.editorNode = $(editorNode)
+    
+/**
+ * This is the method used to insert the text Editor to the parent element
+ * @param {HTMLElement} RootNode This is overall parentNode which all the editor features are apppended to
+ * 
+ */
+this.inserteditorTemplate = (RootNode = $('[data-editor-frame]')) => {
+    RootNode.innerHTML =  `
+        <!-- Some action button -->
+        <button type="button" data-btn-bold>Bold</button>
+        <button type="button" data-btn-itl>Italic</button>
+        <button type="button" data-btn-und>Underline</button>
+        <button type="button" data-btn-prg>Paragraph</button>
+        <button type="button" data-btn-align="left">Text align left</button>
+        <button type="button" data-btn-align="right">Text align right</button>
+        <button type="button" data-btn-align="center">Text align center</button>
+        <button type="button" data-btn-list="ul">list ul</button>
+        <button type="button" data-btn-list="ol">list ul</button>
+        <input type="color" data-btn-color value="#000000" />
+        <!-- The editor -->
+        <div contenteditable="true" id="deditorBox" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
+            
+        </div>
+    `;
+    this.setCaret()
+}
+/**
+ * This is a function that add a  new bold tag to the editor
+ * @param {*} e
+ * this is the event data of the action that is fired 
+ */
+this.newBold = (e) => {
+    e.preventDefault()
+    const { selector, newStatus } = this.newInlineNodeCreator(this.boldStatus, 'b')
+    this.boldStatus = newStatus
+    this.setCaret(selector == null ? null : `#${selector}`);
+}
+/**
+ * This is a function that add a  new italic tag to the editor
+ * @param {*} e
+ * this is the event data of the action that is fired 
+ */
+this.newItalic = (e) =>{
+    e.preventDefault()
+    const { selector, newStatus } = this.newInlineNodeCreator(this.italicStatus, 'i')
+    this.italicStatus = newStatus
+    this.setCaret(selector == null ? null : `#${selector}`);
+}
+/**
+ * This is a function that add a  new italic tag to the editor
+ * @param {*} e
+ * this is the event data of the action that is fired 
+ */
+this.newUnderLine = (e) => {
+    e.preventDefault()
+    const { selector, newStatus, parentNode } = this.newInlineNodeCreator(this.underLineStatus, 'u')
+    this.underLineStatus = newStatus
+    this.setCaret(selector == null ? null : `#${selector}`);
+} 
+/**
+ * This is a function that add a  new paragraph tag to the editor
+ * @param {*} e
+ * this is the event data of the action that is fired 
+ */
+this.newParagraph = (e) => {
+    e.preventDefault()
+    const { selector, newStatus, parentNode } = this.newInlineNodeCreator(null, 'p')
+    // underLineStatus = newStatus
+    this.setCaret(selector == null ? null : `#${selector}`);
+} 
+/**
+ * This is a method used for text alignment
+ * @param {event} e This is the default event passed in to the function by eventListener
+ */
+this.alignText = (e) => {
+    let position = e.target.getAttribute('data-btn-align')
+    console.log(position)
+    let currentNodeActive = window.getSelection()?.anchorNode.parentNode
+    console.log(currentNodeActive)
+    this.addStyle(currentNodeActive, {
+        textAlign: position,
+        display: "inline-block",
+        width:"100%"
+    })
+}
+/**
+ * This is a method use to add color to text
+ * @param {event} e This is the default event passed in to the function by eventListener
+ */
+this.addColor = (e) => {
+    let color = e.target.value;
+    let highlighted = false, _selector
+    console.log(color)
+    console.log(window.getSelection().toString().trim().length)
+    if (window.getSelection().toString().trim() !== "" || window.getSelection().toString().trim().length > 0) highlighted = true
+    console.log(highlighted)
+    if (!highlighted) {
+        const { selector, newStatus, parentNode } = this.newInlineNodeCreator(null, 'span')
+        _selector = selector
+    }
+    else {
+        let { newNodeSelector } = this.createHighlighedParentNode()
+        _selector = newNodeSelector;
+    }
+    this.addStyle($(`#${_selector}`), {
+        color: color
+    })
+    highlighted ? this.setCaret() : this.setCaret(`#${_selector}`)
+}
+/**
+ * This is a methid for adding list 
+ * @param {event} e This is the default event passed in to the function by eventListener
+ * @returns 
+ */
+this.addList = (e) => {
+    const list_tags = ['ul', 'ol'].map(i => i.toLowerCase())
+    let color = e.target.value;
+    let highlighted = false, _selector, parentNode = window.getSelection().anchorNode.parentNode,
+    wantedtag = e.target.getAttribute('data-btn-list').toLowerCase()
+    console.log(wantedtag)
+    console.log(parentNode, parentNode.tagName)
+    if (list_tags.includes(parentNode.tagName.toLowerCase())){
+        let replaceNode = document.createElement(wantedtag)
+        replaceNode.innerHTML = parentNode.innerHTML
+        parentNode.parentNode.replaceChild(replaceNode, parentNode)
+        console.log('welcome')
+        return;
+    }
+    // document.createElement(wantedtag)
+    const { selector } = this.newInlineNodeCreator(null, wantedtag)
+    this.setCaret(`#${selector}`)
+}
+/**
+ * This is a method for adding inline style to the editor and its elements
+ * @param {HTMLElement} domElement This is the HTMLElement in which a style need to be added to 
+ * @param {Json} style This is a json of the style properties to be added to the element
+ */
+this.addStyle = (domElement, style) => {
+    let prevStyle = domElement.style
+    console.log(prevStyle)
+    console.log(style)
+    
+    
+    for (var key in style) {
+        prevStyle[key] = style[key];
+    
+        console.log(prevStyle[key])
+        // prevStyle[key] = value
+    }
+    // domElement.style = prevStyle;
+    // console.log(domElement.style)
+}
+/**
+ * 
+ * @param {String} NodeType This is a string containing the tagName of the element needed to be created
+ * @returns {}
+ */
+this.createHighlighedParentNode = (NodeType = "span") => {
+        // let highlightedNode = window.getSelection().anchorNode
+        let parentNode = window.getSelection().anchorNode.parentNode
+        let highlightedNode = window.getSelection().anchorNode,
+            _text = highlightedNode.textContent,
+            id = new Date().valueOf()
+        para = document.createElement(NodeType);
+        para.setAttribute('id', `s${id}`)
+        // const { selector, newStatus } = newInlineNodeCreator(null, 'span')
+        _selector = `s${id}`
+        highlightedNode.replaceWith(para)
+        para.innerHTML = _text
+
+        return { newNode: para, newNodeSelector: `s${id}`, parentNode: parentNode }
+    }
+/**
+ * 
+ * @param {Boolean} NodeBol
+ * This is a boolean vealue to tell if the status of a given command (bold, italic , unserline) is to be turned on or off 
+ * @param {String} NodeTypeModel 
+ * This is a string of the new DOMELEMENT type
+ * @returns Json
+ */
+this.newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
+    let currentNodeActive = window.getSelection()?.anchorNode.parentElement
+    console.log(currentNodeActive)
+    NodeBol = !NodeBol
+    let id = null
+    // e.preventDefault()
+    // console.log('hello')
+    $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
+    NodeTypeModel = NodeTypeModel.toLowerCase().trim();
+    let NodeType = "div", para
+    if (NodeBol !== null) NodeType = "span"
+    para = document.createElement(NodeType);
+    if (NodeBol || NodeBol == null) {
+        NodeType = NodeTypeModel
+    }
+    if (this.noRootNode.includes(NodeType)) currentNodeActive = $('[data-editor-block]')
+    console.log(NodeType);
+    id = new Date().valueOf();
+    para = document.createElement(NodeType);
+    para.setAttribute("id", `${NodeType.charAt(0)}${id}`)
+    // para.appendChild(document.createTextNode("&nbsp;"))
+    if (this.noRootNode.includes(NodeType)) currentNodeActive = $('[data-editor-block]')
+    currentNodeActive.appendChild(para);
+    // currentNodeActive.innerHTML += para
+    $(`#${currentNodeActive.id}`).appendChild(para);
+    console.log(currentNodeActive)
+    if (this.mustHaveChild.includes(NodeType)) {
+        para.appendChild(document.createElement(this.childNeeded[NodeType]))
+    } else {
+
+        para.innerHTML = "&nbsp;"
+    }
+    console.log(para, currentNodeActive)
+    return { selector: `${NodeType.charAt(0)}${id}`, parentNode: currentNodeActive, node: para, newStatus: NodeBol }
+}
+
+/**
+ * This is a method use for controlling of the cursor
+ * @param {String} selector
+ * This is the Node elemnt in which the cursor is meant to be at 
+ */
+this.setCaret = (selector = null) => {
+    // console.log(document.querySelector(selector))
+    let startNode = selector == null ? $('[data-editor-block]') : $('[data-editor-block]').querySelector(selector)
+    startNode = startNode == null ? $('[data-editor-block]').lastChild : startNode
+    // console.log(startNode, document.querySelector(selector), selector)
+    let range = document.createRange(),
+    sel = window.getSelection() 
+    range.setStart(startNode, 0)
+    range.setEnd(startNode, 1)
+    range.collapse(false)
+    // console.log(range.toString())
+    sel.removeAllRanges()
+    sel.addRange(range)
+    // sel.removeAllRanges()
+
+
+}
+}
+
+export {InsertEditor, $}

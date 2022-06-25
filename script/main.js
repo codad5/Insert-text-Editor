@@ -6,7 +6,12 @@
  * @returns DOMElement
  */
 const $ = (selector) => document.querySelector(selector),
-noRootNode = ['p', 'div']
+noRootNode = ['p', 'div',],
+mustHaveChild = ['ul' , 'ol'],
+childNeeded = {
+    'ul':'li',
+    'ol':'li',
+}
 const editorTemplate = `
     <!-- Some action button -->
     <button type="button" data-btn-bold>Bold</button>
@@ -16,9 +21,11 @@ const editorTemplate = `
     <button type="button" data-btn-align="left">Text align left</button>
     <button type="button" data-btn-align="right">Text align right</button>
     <button type="button" data-btn-align="center">Text align center</button>
+    <button type="button" data-btn-list="ul">list ul</button>
+    <button type="button" data-btn-list="ol">list ul</button>
     <input type="color" data-btn-color value="#000000" />
     <!-- The editor -->
-	<div contenteditable="true" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
+	<div contenteditable="true" id="deditorBox" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
 		 
 	</div>
 `;
@@ -51,7 +58,8 @@ const newBold = (e) => {
  */
 const newItalic = (e) => {
     e.preventDefault()
-    const { selector, newStatus  } = newInlineNodeCreator(italicStatus, 'i')
+    const { selector, newStatus, node  } = newInlineNodeCreator(italicStatus, 'i')
+    console.log(node)
     italicStatus = newStatus
     setCaret(selector == null ? null : `#${selector}`);
 }
@@ -101,22 +109,31 @@ const addColor = (e) => {
         _selector = selector
     }
     else{
-        let parentNode = window.getSelection().anchorNode.parentNode
-        let childNode = window.getSelection().anchorNode,
-        _text = childNode.textContent,
-            id = new Date().valueOf()
-        para = document.createElement('span');
-        para.setAttribute('id', `s${id}`)
-        // const { selector, newStatus } = newInlineNodeCreator(null, 'span')
-        _selector = `s${id}`
-        childNode.replaceWith(para)
-        para.innerHTML = _text
-        
+        let { newNodeSelector } = createHighlighedParentNode()
+        _selector = newNodeSelector;
     }
     addStyle($(`#${_selector}`),{
         color: color
     })
     highlighted ? setCaret() : setCaret(`#${_selector}`)
+}
+const addList = (e) => {
+    const list_tags = ['ul', 'ol'].map(i => i.toLowerCase())
+    let color = e.target.value;
+    let highlighted = false, _selector, parentNode = window.getSelection().anchorNode.parentNode,
+    wantedtag = e.target.getAttribute('data-btn-list').toLowerCase()
+    console.log(wantedtag)
+    console.log(parentNode, parentNode.tagName)
+    if (list_tags.includes(parentNode.tagName.toLowerCase())){
+        let replaceNode = document.createElement(wantedtag)
+        replaceNode.innerHTML = parentNode.innerHTML
+        parentNode.parentNode.replaceChild(replaceNode, parentNode)
+        console.log('welcome')
+        return;
+    }
+    // document.createElement(wantedtag)
+    const { selector } = newInlineNodeCreator(null, wantedtag)
+    setCaret(`#${selector}`)
 }
 // for adding styling 
 const addStyle = (domElement, style) => {
@@ -135,8 +152,20 @@ const addStyle = (domElement, style) => {
     // console.log(domElement.style)
 }
 
-const createHighlighedParentNode = () => {
-    let highlightedNode = window.getSelection().anchorNode
+const createHighlighedParentNode = (NodeType = "span") => {
+    // let highlightedNode = window.getSelection().anchorNode
+    let parentNode = window.getSelection().anchorNode.parentNode
+        let highlightedNode = window.getSelection().anchorNode,
+        _text = highlightedNode.textContent,
+            id = new Date().valueOf()
+        para = document.createElement(NodeType);
+        para.setAttribute('id', `s${id}`)
+        // const { selector, newStatus } = newInlineNodeCreator(null, 'span')
+        _selector = `s${id}`
+        highlightedNode.replaceWith(para)
+        para.innerHTML = _text
+
+        return {newNode:para, newNodeSelector: `s${id}`, parentNode:parentNode}
 }
 
 // const getNodeType
@@ -149,7 +178,7 @@ const createHighlighedParentNode = () => {
  * @returns Json
  */
 const newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
-    let currentNodeActive =  window.getSelection()?.anchorNode.parentNode
+    let currentNodeActive =  window.getSelection()?.anchorNode.parentElement
     console.log(currentNodeActive)
     NodeBol = !NodeBol
     let id = null
@@ -157,7 +186,8 @@ const newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
     // console.log('hello')
     $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
     NodeTypeModel = NodeTypeModel.toLowerCase().trim();
-    let NodeType = "div",
+    let NodeType = "div", para
+    if (NodeBol !== null) NodeType = "span"
     para = document.createElement(NodeType);
     if (NodeBol || NodeBol == null) {
         NodeType = NodeTypeModel
@@ -171,8 +201,14 @@ const newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
     if (noRootNode.includes(NodeType)) currentNodeActive = $('[data-editor-block]')
     currentNodeActive.appendChild(para);
     // currentNodeActive.innerHTML += para
+    $(`#${currentNodeActive.id}`).appendChild(para);
     console.log(currentNodeActive)
-    para.innerHTML = "&nbsp; <span></span>"
+    if(mustHaveChild.includes(NodeType)){
+        para.appendChild(document.createElement(childNeeded[NodeType]))
+    }else{
+
+        para.innerHTML = "&nbsp;"
+    }
     console.log(para, currentNodeActive)
     return { selector: `${NodeType.charAt(0)}${id}`, parentNode: currentNodeActive, node: para, newStatus: NodeBol}
 }
@@ -228,6 +264,8 @@ document.querySelectorAll('[data-btn-align]').forEach(item => {
 })
 
 $('[data-btn-color]').addEventListener('change', addColor)
+
+document.querySelectorAll('[data-btn-list]').forEach(i => {i.addEventListener('click', addList)})
 // Event listener to keep track of default / built in commands like `Ctrl+B`
 $('[data-editor-block]').addEventListener('keydown', (event) => {
     // event.preventDefault();

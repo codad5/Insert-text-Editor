@@ -75,3 +75,45 @@ class List{
 
 }
 
+
+
+class NodeCreation{
+
+    constructor(tag_category,index) {
+        this.tag_category=tag_category
+        this.index=index
+    }
+
+    createNodes(){
+        let heading=['h1','h2','h3','h4','h5','h6'].map((i)=>document.createElement(i))
+        let texttags=['p','b','u','i','br','hr','strong','em','pre','acronym','samp','var','cite','address','blockquote','bdo','ins','del','dfn','kdb','footer','header','frameset','frame','html'].map((i)=>document.createElement(i) )
+        var linkTag=['a','base'].map((i)=>document.createElement(i))
+        let ImagObjTag=['img','area','map','param','object','video'].map((i)=>document.createElement(i))
+        let listtag=['ul','ol','li','dl','dt','dd'].map((i)=>document.createElement(i))
+        let TableTag=['table','tr','td','th','tbody','thead','tfoot','col','colgroup','caption'].map((i)=>document.createElement(i))
+        let formTag=['form','input','textarea','select','option','optgroup','button','label','fieldset','legend'].map((i)=>document.createElement(i))
+        let containerTags=['div'].map((i)=>document.createElement(i))
+
+        let features={
+            headingTag:heading,
+            textTags:texttags,
+            linkTags:linkTag,
+            ImageAndVideoTags:ImagObjTag,
+            listTags:listtag,
+            tableTags:TableTag,
+            // formTags:formTag,
+            // scriptTags:scripTag,
+            containerTags:containerTags
+        }
+
+        return features[this.tag_category][this.index]
+
+    }
+
+
+}
+
+
+
+
+

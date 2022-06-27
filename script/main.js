@@ -53,8 +53,8 @@ class Editor{
         var nodeclass=new NodeCreation(name,index)
         
         let id=new Date().valueOf()
-        let first_node=this.editor.childNodes[1]
-        let grab_the_first_node=document.getElementById(`${first_node.id}`)
+        let first_node=this.editor.childNodes[0]
+        let grab_the_first_node=document.getElementById(first_node.id)
         let createTheNOde=nodeclass.createNodes()
         createTheNOde.setAttribute('id',id)
         grab_the_first_node.appendChild(createTheNOde)  
@@ -69,7 +69,22 @@ class Editor{
             var nodeclass=new NodeCreation(name,index)
             let id=new Date().valueOf()
             let choice_node=this.editor.childNodes[number]
-            let grab_the_choice_node=document.getElementById(`${choice_node.id}`)
+            let grab_the_choice_node=document.getElementById(choice_node.id)
+            let createTheNOde=nodeclass.createNodes()
+            createTheNOde.setAttribute('id',id)
+            grab_the_choice_node.appendChild(createTheNOde) 
+        }
+
+    }
+
+    insertAnywhere(node,number,name,index){
+        let node=document.getElementById(node)
+
+        if (-1<number<node.childNodes.length-1){
+            var nodeclass=new NodeCreation(name,index)
+            let id=new Date().valueOf()
+            let choice_node=this.node.childNodes[number]
+            let grab_the_choice_node=document.getElementById(choice_node.id)
             let createTheNOde=nodeclass.createNodes()
             createTheNOde.setAttribute('id',id)
             grab_the_choice_node.appendChild(createTheNOde) 
@@ -77,8 +92,15 @@ class Editor{
 
     }
     addEventListen(){
-        document.getElementById('bold').addEventListener('click',()=>this.generateFirstLevelNode('containerTags',0))
-        document.getElementById('bolda').addEventListener('click',()=>this.insertlast('headingTag',0))
+        document.getElementById('genfirstnode').addEventListener('click',()=>this.generateFirstLevelNode('containerTags',0))
+
+        document.getElementById('insertlast').addEventListener('click',()=>this.insertlast('headingTag',0))
+
+        document.getElementById('insertfirst').addEventListener('click',()=>this.insertBefore('containerTags',0))
+
+        document.getElementById('insertchoice').addEventListener('click',()=>this.insertChoice(3,'containerTags',0))
+
+        
 
     }
 

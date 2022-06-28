@@ -77,7 +77,10 @@ this.inserteditorTemplate = (RootNode = $('[data-editor-frame]')) => {
         <input type="color" data-btn-color value="#000000" />
         </div>
         <!-- The editor -->
-        <div contenteditable="true" id="deditorBox" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
+        <style>
+        
+        </style>
+        <div contenteditable="true" id="deditorBox1245" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
             
         </div>
         <!-- this is the input tag required for your form upload. it carries the data in the editor -->
@@ -88,6 +91,11 @@ this.inserteditorTemplate = (RootNode = $('[data-editor-frame]')) => {
     this.addStyle($('.Insert-props'), {
         width:'200px',
         overflow:'hidden'
+    })
+    this.addStyle($('[data-editor-block]'), {
+        background:'#ddd',
+        caretColor: '#333',
+        border:'none'
     })
     
     this.setCaret()

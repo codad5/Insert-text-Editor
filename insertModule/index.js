@@ -23,6 +23,7 @@ $('[data-btn-color]').addEventListener('change', AutoEditor.addColor)
 
 document.querySelectorAll('[data-btn-list]').forEach(i => { i.addEventListener('click', AutoEditor.addList) })
 //saving the HTML format of the element in to the form data by adding an input
+$('[data-editor-block]').addEventListener('focus', (e) => {AutoEditor.addStyle(e.target, {border: 'none', borderColor:'transparent', borderSize:'0px'})})
 $('[data-editor-block]').addEventListener('input', (e) => {
     // console.log('hi')
     let input = $('[data-editor-frame]')

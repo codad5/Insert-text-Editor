@@ -22,6 +22,16 @@ document.querySelectorAll('[data-btn-align]').forEach(item => {
 $('[data-btn-color]').addEventListener('change', AutoEditor.addColor)
 
 document.querySelectorAll('[data-btn-list]').forEach(i => { i.addEventListener('click', AutoEditor.addList) })
+//saving the HTML format of the element in to the form data by adding an input
+$('[data-editor-block]').addEventListener('input', (e) => {
+    // console.log('hi')
+    let input = $('[data-editor-frame]')
+    .querySelector(`input[name="${$('[data-editor-frame]').dataset?.editorFormname}"]`)
+    // to delete any script tag 
+    e.target.querySelectorAll('script').forEach(i => { i = null})
+    input.value = e.target.innerHTML
+    // console.log(input.value)
+})
 // Event listener to keep track of default / built in commands like `Ctrl+B`
 $('[data-editor-block]').addEventListener('keydown', (event) => {
     // event.preventDefault();

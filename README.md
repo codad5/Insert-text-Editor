@@ -35,13 +35,13 @@
 # Open source contribution
 ### Clone this repo
 ```bash
-    git clone 
+    $ git clone 
 ```
 >
 ### Run on a Live serve
 >> if you have node installed
 ```bash
-    npx serve
+    $ npx serve
 ```
 >> OR run live-server if you are using vs-code live server extension
 

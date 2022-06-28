@@ -33,7 +33,7 @@ function InsertEditor(editorNode) {
     /**
      * This is to  know the status of the underline
      */
-    this.underLineStatus = 
+    this.underLineStatus = false
     /**
      * This are element which require no root Node 
      */
@@ -61,22 +61,35 @@ function InsertEditor(editorNode) {
  */
 this.inserteditorTemplate = (RootNode = $('[data-editor-frame]')) => {
     RootNode.innerHTML =  `
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <div class="Insert-props" >
+        <div class="insert-control-panel">
         <!-- Some action button -->
-        <button type="button" data-btn-bold>Bold</button>
-        <button type="button" data-btn-itl>Italic</button>
-        <button type="button" data-btn-und>Underline</button>
-        <button type="button" data-btn-prg>Paragraph</button>
-        <button type="button" data-btn-align="left">Text align left</button>
-        <button type="button" data-btn-align="right">Text align right</button>
-        <button type="button" data-btn-align="center">Text align center</button>
-        <button type="button" data-btn-list="ul">list ul</button>
-        <button type="button" data-btn-list="ol">list ul</button>
+        <button type="button" class="fa fa-bold" aria-hidden="true" data-btn-bold></button>
+        <button type="button" class="fa fa-italic" aria-hidden="true" data-btn-itl></button>
+        <button type="button" class="fa fa-underline" aria-hidden="true" data-btn-und></button>
+        <button type="button" class="fa fa-paragraph" aria-hidden="true" data-btn-prg></button>
+        <button type="button" class="fa fa-align-left" aria-hidden="true" data-btn-align="left"></button>
+        <button type="button" class="fa fa-align-right" aria-hidden="true" data-btn-align="right"></button>
+        <button type="button" class="fa fa-align-center" aria-hidden="true" data-btn-align="center"></button>
+        <button type="button" class="fa fa-list-ul" aria-hidden="true" data-btn-list="ul"></button>
+        <button type="button" class="fa fa-list-ol" aria-hidden="true" data-btn-list="ol"></button>
         <input type="color" data-btn-color value="#000000" />
+        </div>
         <!-- The editor -->
         <div contenteditable="true" id="deditorBox" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
             
         </div>
+        <!-- this is the input tag required for your form upload. it carries the data in the editor -->
+        <input type="text" value="" style="visibility:hidden" name="${RootNode.dataset?.editorFormname || ''}" />
+        </div>
     `;
+    console.log(RootNode.dataset)
+    this.addStyle($('.Insert-props'), {
+        width:'200px',
+        overflow:'hidden'
+    })
+    
     this.setCaret()
 }
 /**
@@ -234,38 +247,66 @@ this.createHighlighedParentNode = (NodeType = "span") => {
  * @returns Json
  */
 this.newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
+    //This is to get the node where the editor cursor is on
     let currentNodeActive = window.getSelection()?.anchorNode.parentElement
-    console.log(currentNodeActive)
+    // console.log(currentNodeActive)
+
     NodeBol = !NodeBol
+    // Initializing the variable for the id of the new node to be created
     let id = null
     // e.preventDefault()
     // console.log('hello')
     $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
+    // This is to filter and correct any type from the passed param 
     NodeTypeModel = NodeTypeModel.toLowerCase().trim();
+    // This is a default node type
     let NodeType = "div", para
+    // this is the default node type if the NodeBol is null meaning it is a block element
     if (NodeBol !== null) NodeType = "span"
+    // Creating the Node element This can be changed later on this funtion is some param are met up with 
     para = document.createElement(NodeType);
+    // setting the node type to the given param 
     if (NodeBol || NodeBol == null) {
         NodeType = NodeTypeModel
     }
+    // checking if the given node type is allowed to have aby root node aside the main editor ( this can be tags like 'p')
     if (this.noRootNode.includes(NodeType)) currentNodeActive = $('[data-editor-block]')
-    console.log(NodeType);
+    // console.log(NodeType);
+    // creating an id for the new node
     id = new Date().valueOf();
+    // creating the new node
     para = document.createElement(NodeType);
+    // setting the id 
     para.setAttribute("id", `${NodeType.charAt(0)}${id}`)
     // para.appendChild(document.createTextNode("&nbsp;"))
+    // just a duplicate Code
     if (this.noRootNode.includes(NodeType)) currentNodeActive = $('[data-editor-block]')
-    currentNodeActive.appendChild(para);
-    // currentNodeActive.innerHTML += para
-    $(`#${currentNodeActive.id}`).appendChild(para);
-    console.log(currentNodeActive)
+    // currentNodeActive.appendChild(para);
+    // if bool is false that means the node has to be turned off and create a new span tag under the parent node of the node to be turn off
+    if(NodeBol == false){
+        // console.log(currentNodeActive.parentElement)
+        // incase the parent Node does not exist it will append the new node under the main editor
+        if (currentNodeActive.parentElement == null) {
+            $('[data-editor-block]').appendChild(para)
+        }else{
+
+            currentNodeActive.parentElement.appendChild(para) 
+        }
+    }else{
+        // incase the node is not to be turn off
+        currentNodeActive.appendChild(para)
+        
+    }
+    // $(`#${currentNodeActive.id}`).appendChild(para);
+    // console.log(currentNodeActive)
+    // this is incase a node must have a default default child node like 'ol for orderlist' must have a child node 'li'
     if (this.mustHaveChild.includes(NodeType)) {
         para.appendChild(document.createElement(this.childNeeded[NodeType]))
     } else {
 
         para.innerHTML = "&nbsp;"
     }
-    console.log(para, currentNodeActive)
+    // console.log(para, currentNodeActive)
     return { selector: `${NodeType.charAt(0)}${id}`, parentNode: currentNodeActive, node: para, newStatus: NodeBol }
 }
 

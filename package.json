@@ -1,0 +1,29 @@
+{
+  "name": "insert-text-editor",
+  "version": "1.0.0",
+  "description": "This is a module for a web base test editor",
+  "main": "insertModule/index.main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codad5/Insert-text-Editor.git"
+  },
+  "keywords": [
+    "Text",
+    "editor"
+  ],
+  "author": "Codad5, Jbotrex",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codad5/Insert-text-Editor/issues"
+  },
+  "homepage": "https://github.com/codad5/Insert-text-Editor#readme",
+  "devDependencies": {
+    "jest": "^28.1.2"
+  }
+}

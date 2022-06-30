@@ -1,4 +1,5 @@
 // this is function i created to aid easy call of dom elements
+// import { $ } from './modules/selector.js'
 /**
  * 
  * @param {*} selector
@@ -6,6 +7,7 @@
  * @returns DOMElement
  */
 const $ = (selector) => document.querySelector(selector)
+
 /**
  * 
  * @param {*} editorNode This is the Overall Parent Node in which the editor companent are inserted into
@@ -52,7 +54,7 @@ function InsertEditor(editorNode) {
     /**
      * This is overall parentNode which all the editor features are apppended to
      */
-    this.editorNode = $(editorNode)
+    // this.editorNode = $(editorNode)
     
     /**
      * This is the method used to insert the text Editor to the parent element
@@ -225,6 +227,7 @@ function InsertEditor(editorNode) {
         }
         // domElement.style = prevStyle;
         // console.log(domElement.style)
+        return domElement.style
     }
     /**
      * 
@@ -368,5 +371,6 @@ function InsertEditor(editorNode) {
 
     }
 }
+const sum = (x, y) => x + y
 
-export {InsertEditor, $}
+export {InsertEditor, $, sum}

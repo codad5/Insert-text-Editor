@@ -25,7 +25,8 @@
   },
   "homepage": "https://github.com/codad5/Insert-text-Editor#readme",
   "devDependencies": {
-    "jest": "^28.1.2"
+    "jest": "^28.1.2",
+    "jest-environment-jsdom": "^28.1.2"
   },
   "jest": {
     "verbose": true,

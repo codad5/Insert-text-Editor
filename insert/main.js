@@ -54,7 +54,7 @@ function InsertEditor(editorNode) {
     /**
      * This is overall parentNode which all the editor features are apppended to
      */
-    // this.editorNode = $(editorNode)
+    this.editorNode = $(editorNode)
     
     /**
      * This is the method used to insert the text Editor to the parent element
@@ -259,7 +259,7 @@ function InsertEditor(editorNode) {
      */
     this.newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
         //This is to get the node where the editor cursor is on
-        let currentNodeActive = window.getSelection()?.anchorNode.parentElement
+        let currentNodeActive = window.getSelection()?.anchorNode?.parentElement ?? editorNode
         // console.log(currentNodeActive)
 
         NodeBol = !NodeBol
@@ -267,7 +267,7 @@ function InsertEditor(editorNode) {
         let id = null
         // e.preventDefault()
         // console.log('hello')
-        $('[data-editor-block]').innerHTML = $('[data-editor-block]').innerHTML.trim()
+        $('[data-editor-block]').innerHTML = $('[data-editor-block]')?.innerHTML.trim()
         // This is to filter and correct any type from the passed param 
         NodeTypeModel = NodeTypeModel.toLowerCase().trim();
         // This is a default node type

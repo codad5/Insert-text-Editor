@@ -4,24 +4,127 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.css">
     <title>Document</title>
+
 </head>
 <body>
     
-    <div id="editor" contenteditable="True" style="margin: auto;height: 800px;width: 70%;background-color: greenyellow;color:darkblue"></div>
+    <div class="container">
+
+        <div class="nav">
+            <i class="fa fa-reorder plus  fa-lg"></i>
+
+            <div class="icondiv">a</div>
+            <div class="branddiv">a</div>
+            <div class="headingdiv">a</div>
+        </div>
+
+        <div class="main">
+            <div class="aside" id="aside">
+
+                <div class="asidebtn">
+                   <span class="fa fa-plus plus  fa-lg"></span><span class="asidetxt">Heading</span>
+                </div>
+
+                <div class="asidebtn">
+                    <span class="fa fa-plus plus  fa-lg"></span><span class="asidetxt">paragrah</span>
+                 </div>
+
+                 <div class="asidebtn">
+                    <span class="fa fa-plus plus  fa-lg"></span><span class="asidetxt">table</span>
+                 </div>
+
+                 <div class="asidebtn">
+                    <span class="fa fa-plus plus  fa-lg"></span><span class="asidetxt">list</span>
+                 </div>
+
+                 <div class="asidebtn">
+                    <span class="fa fa-plus plus  fa-lg"></span><span class="asidetxt">image</span>
+                 </div>
+
+                 <div class="asidebtn">
+                    <span class="fa fa-plus plus  fa-lg"></span><span class="asidetxt">video</span>
+                 </div>
+
+                 <div class="asidebtn">
+                    <span class="fa fa-plus plus  fa-lg"></span><span class="asidetxt">div</span>
+                 </div>
+                 <hr>
+                 <div class="asidebtn">
+                    <span class="fa fa-hand-stop-o  fa-lg"></span><span class="asidetxt">select</span>
+                 </div>
+                 <div class="asidebtn">
+                    <span class="fa fa-arrow-up  fa-lg"></span><span class="asidetxt">up</span>
+                 </div>
+                 <div class="asidebtn">
+                    <span class="fa fa-arrow-down fa-lg"></span><span class="asidetxt">down</span>
+                 </div>
+                 <div class="asidebtn">
+                    <span class="fa fa-trash fa-lg"></span><span class="asidetxt">delete</span>
+                 </div>
+                 <div class="asidebtn">
+                    <span class="fa fa-undo fa-lg"></span><span class="asidetxt">undo</span>
+                 </div>
+                 <div class="asidebtn">
+                    <i class="fa fa-redo fa-lg"></i><span class="asidetxt">redo</span>
+                 </div>
+
+            </div>
+
+            <div class="editor-container">
+                <div class="editor">
+                    <div class="editornav">
+                        <div class="editorstyles" >
+                            <select name="" id="">
+                                <option value="ultimate">ddd</option>
+                            </select>
+
+                            <select name="" id="">
+                                <option value="ultimate">ddd</option>
+                            </select>
+
+                            <select name="" id="">
+                                <option value="ultimate">ddd</option>
+                            </select>
+
+                            <select name="" id="">
+                                <option value="ultimate">ddd</option>
+                            </select>
+
+                            <select name="" id="">
+                                <option value="ultimate">ddd</option>
+                            </select>
+                        </div>
+
+                        <div class="editorsave">
+                            <i class="fa fa-eye select fa-lg"></i>
+                            <i class="fa fa-bookmark select fa-lg"></i>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <i class="fa fa-cog settings fa-lg"></i>
+    
+
+        </div>
+
+        <div class="footer">cddddd</div>
+    </div>
 
 
 
-
-
-
-
-
-
-    <button id="genfirstnode" >genfirstnode</button>
-        <button id="insertlast" >insertinlastnode</button>
-        <button id="insertfirst" >insertinfirstnode</button>
-        <button id="insertchoice" >insertinchoice</button>
-    <script src="script/main.js"></script>
+<button onclick="bla()">reasd</button>
+<script>
+    function bla(){
+    var ele=document.getElementById('aside')
+    ele.setAttribute('class','hide')
+    }
+</script>
+    
 </body>
 </html>

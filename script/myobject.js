@@ -57,7 +57,7 @@ class List{
             let b=document.createElement('ul')
             b.setAttribute('id',id)
             editor.appendChild(b)
-            li(id,this.no_of_li)
+            this.li(id,this.no_of_li)
     }
 
 

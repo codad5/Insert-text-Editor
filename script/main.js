@@ -34,15 +34,18 @@ class Editor{
             createTheNOde.appendChild(mytext)
             grab_the_last_node.appendChild(createTheNOde)  
         }
-        // if(name=='listTags'){
-        //     createListTag()
+        if(name=='listTags'){
+            var list=new List(6)
+            list.createListTag()
+            
 
 
-        // };
-        // if(name=='tableTags'){
-        //     createListTag()
+        };
+        if(name=='tableTags'){
+            var table=new Table(3,3)
+            table.createTable()
 
-        // }
+        }
     
         
         return
@@ -77,24 +80,24 @@ class Editor{
 
     }
 
-    insertAnywhere(node,number,name,index){
-        let node=document.getElementById(node)
+    // insertAnywhere(node,number,name,index){
+    //     let node=document.getElementById(node)
 
-        if (-1<number<node.childNodes.length-1){
-            var nodeclass=new NodeCreation(name,index)
-            let id=new Date().valueOf()
-            let choice_node=this.node.childNodes[number]
-            let grab_the_choice_node=document.getElementById(choice_node.id)
-            let createTheNOde=nodeclass.createNodes()
-            createTheNOde.setAttribute('id',id)
-            grab_the_choice_node.appendChild(createTheNOde) 
-        }
+    //     if (-1<number<node.childNodes.length-1){
+    //         var nodeclass=new NodeCreation(name,index)
+    //         let id=new Date().valueOf()
+    //         let choice_node=this.node.childNodes[number]
+    //         let grab_the_choice_node=document.getElementById(choice_node.id)
+    //         let createTheNOde=nodeclass.createNodes()
+    //         createTheNOde.setAttribute('id',id)
+    //         grab_the_choice_node.appendChild(createTheNOde) 
+    //     }
 
-    }
+    // }
     addEventListen(){
         document.getElementById('genfirstnode').addEventListener('click',()=>this.generateFirstLevelNode('containerTags',0))
 
-        document.getElementById('insertlast').addEventListener('click',()=>this.insertlast('headingTag',0))
+        document.getElementById('insertlast').addEventListener('click',()=>this.insertlast('tableTags',0))
 
         document.getElementById('insertfirst').addEventListener('click',()=>this.insertBefore('containerTags',0))
 
@@ -153,5 +156,83 @@ class NodeCreation{
 
     }
 
+
+}
+
+
+class List{
+    constructor(no_of_li){
+        this.no_of_li=no_of_li
+    }
+
+        createListTag(){
+            let id=new Date().valueOf()
+          
+            let b=document.createElement('ul')
+            b.setAttribute('id',id)
+            editor.appendChild(b)
+            this.li(id,this.no_of_li)
+    }
+
+
+    li(id,no){
+        var grab_the_node=document.getElementById(id)
+        for(let i=0;i<no;i++){
+            var created_element=document.createElement('li')
+            grab_the_node.appendChild(created_element)
+        }
+        
+        
+        }
+
+
+
+}
+
+
+class Table{
+
+    constructor(columns,rows){
+        this.columns=columns
+        this.rows=rows
+    }
+
+    createTable(){
+        let id=new Date().valueOf()
+        var editor=document.getElementById('editor')
+        let mytable=document.createElement('table')
+        mytable.setAttribute('id',id)
+        editor.append(mytable)
+        this.tr(this.rows,id)
+       
+    }
+
+    tr(no,id){
+        let myarrayid=[]
+        for(let i=0;i<no;i++){
+            let myid=new Date().valueOf()
+            var mytr=document.createElement('tr')
+            mytr.setAttribute('id',myid)
+            document.getElementById(id).append(mytr)
+            myarrayid.push(myid)
+            
+        }
+        this.td(this.columns,no,myarrayid)
+    }
+
+
+    td(no_of_td,no_of_tr,id){
+        for(let y=0;y<no_of_tr;y++){
+     
+        
+                 for(let i=0;i<no_of_td;i++){
+                     let myid=new Date().valueOf()
+                     var mytd=document.createElement('td')
+                     mytd.setAttribute('id',myid)
+                    document.getElementById(id[y]).append(mytd)
+                 }
+     
+     }
+     }
 
 }

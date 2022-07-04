@@ -20,6 +20,7 @@ document.querySelectorAll('[data-btn-align]').forEach(item => {
     item.addEventListener('click', AutoEditor.alignText)
 })
 $('[data-btn-color]').addEventListener('change', AutoEditor.addColor)
+$('[data-btn-table]').addEventListener('click', AutoEditor.newTable)
 
 document.querySelectorAll('[data-btn-list]').forEach(i => { i.addEventListener('click', AutoEditor.addList) })
 //saving the HTML format of the element in to the form data by adding an input

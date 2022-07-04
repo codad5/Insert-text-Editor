@@ -1,5 +1,6 @@
 // this is function i created to aid easy call of dom elements
 // import { $ } from './modules/selector.js'
+// import { $, jQuery } from 'jquery';
 /**
  * 
  * @param {*} selector
@@ -39,17 +40,19 @@ function InsertEditor(editorNode) {
     /**
      * This are element which require no root Node 
      */
-    this.noRootNode = ['p', 'div']
+    this.noRootNode = ['p', 'div', 'table'].map(i => i.toLowerCase())
     /**
      * this are element that must be created with a child appended to  it
      */
-    this.mustHaveChild = ['ul', 'ol']
+    this.mustHaveChild = ['ul', 'ol', 'table', 'tr'].map(i => i.toLowerCase())
     /**
      * This is a json containg the child for each element  in mustHaveChild
      */
     this.childNeeded = {
         'ul':'li',
         'ol':'li',
+        'table': 'tr',
+        'tr':'td'
     }
     /**
      * This is overall parentNode which all the editor features are apppended to
@@ -76,11 +79,12 @@ function InsertEditor(editorNode) {
             <button type="button" class="fa fa-align-center" aria-hidden="true" data-btn-align="center"></button>
             <button type="button" class="fa fa-list-ul" aria-hidden="true" data-btn-list="ul"></button>
             <button type="button" class="fa fa-list-ol" aria-hidden="true" data-btn-list="ol"></button>
+            <button type="button" class="fa fa-table" aria-hidden="true" data-btn-table></button>
             <input type="color" data-btn-color value="#000000" />
             </div>
             <!-- The editor -->
             <style>
-            
+                
             </style>
             <div contenteditable="true" id="deditorBox1245" data-editor-block oncontextmenu="return false" style="background:#8d8;width:200px;aspect-ratio: 1;">
                 
@@ -146,6 +150,12 @@ function InsertEditor(editorNode) {
         // underLineStatus = newStatus
         this.setCaret(selector == null ? null : `#${selector}`);
     } 
+    this.newTable = (e) => {
+        e.preventDefault()
+        const { tableNodeId } = this.tableNodeCreation()
+        this.setCaret(`#${tableNodeId}`)
+
+    }
     /**
      * This is a method used for text alignment
      * @param {event} e This is the default event passed in to the function by eventListener
@@ -207,6 +217,35 @@ function InsertEditor(editorNode) {
         // document.createElement(wantedtag)
         const { selector } = this.newInlineNodeCreator(null, wantedtag)
         this.setCaret(`#${selector}`)
+    }
+    this.tableNodeCreation = (noOfColumn = 3, noOfRow = 2) => {
+        let currentNodeActive = window.getSelection()?.anchorNode?.parentElement ?? $('[data-editor-block]'),
+        insertTableNode = currentNodeActive
+        let tablePrep = document.createElement('table')
+        let firstRow = document.createElement('tr'), i = 0
+        while(i < noOfColumn){
+            console.log(i)
+            firstRow.appendChild(document.createElement('td'))
+            i++
+            
+        }
+        i = 0
+        
+        let tablePropPanel = `
+
+        `
+        tablePrep.innerHTML += tablePropPanel
+        if (!this.noRootNode.includes(currentNodeActive.tagName.toLowerCase()) || ['table', 'tr', 'td'].includes(currentNodeActive.tagName.toLowerCase())){
+            insertTableNode = $('[data-editor-block]')
+
+        }
+        let id = new Date().valueOf()
+        id = `t${id}`
+        tablePrep.setAttribute('id', id)
+        tablePrep.appendChild(firstRow)
+        insertTableNode.append(tablePrep)
+       
+        return {tableNodeId: id}
     }
     /**
      * This is a method for adding inline style to the editor and its elements

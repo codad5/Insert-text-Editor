@@ -1,5 +1,5 @@
 import {InsertEditor, $} from './main.js'
-
+// import $  from '../node_modules/jquery/dist/jquery.js'
 // const $ = (selector) => document.querySelector(selector)
 
 

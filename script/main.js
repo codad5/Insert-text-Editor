@@ -1,4 +1,43 @@
-var editor=document.getElementById('editor')
+
+var editor=document.getElementById('realeditor');
+
+const addheading=document.getElementById('heading');
+const addpara=document.getElementById('paragraph');
+const addtable=document.getElementById('table');
+const addlist=document.getElementById('list');
+const addImage=document.getElementById('image');
+const addvideo=document.getElementById('addvideo');
+const adddiv=document.getElementById('div');
+const addselect=document.getElementById('select');
+const addup=document.getElementById('up');
+const adddown=document.getElementById('down');
+const addtrash=document.getElementById('trash');
+const addundo=document.getElementById('undo');
+const addredo=document.getElementById('redo');
+function love(){
+    [addImage,adddiv,adddown,addheading,addlist,addpara,addredo,addselect,addtable,addtrash,addundo,addup,addvideo].map((i)=>i.addEventListener('click',(event)=>  hope(event.target.id)));
+    
+    
+    
+};
+
+function hope (vae){
+    return vae
+};
+
+
+
+
+
+// const greet = (who) => {
+//     return `Hello, ${who}!`;
+//   };
+// console.log(love())
+
+  
+
+
+
 
 
 class Editor{
@@ -94,14 +133,38 @@ class Editor{
     //     }
 
     // }
+
+    addFirstLevel(){
+        [addImage,adddiv,adddown,addheading,addlist,addpara,addredo,addselect,addtable,addtrash,addundo,addup,addvideo].map((i)=>i.addEventListener('click',(event)=>this.generateFirstLevelNode(event.target.id,0)));
+
+        
+        
+    };
+    addlastnode(){
+        [addImage,adddiv,adddown,addheading,addlist,addpara,addredo,addselect,addtable,addtrash,addundo,addup,addvideo].map((i)=>i.addEventListener('click',(event)=>this.insertlast(event.target.id,0)));
+
+
+    };
+    
+    addinsertbefore(){
+        [addImage,adddiv,adddown,addheading,addlist,addpara,addredo,addselect,addtable,addtrash,addundo,addup,addvideo].map((i)=>i.addEventListener('click',(event)=>this.insertBefore(event.target.id,0)));
+    }
+
+    addchoice(no){
+        [addImage,adddiv,adddown,addheading,addlist,addpara,addredo,addselect,addtable,addtrash,addundo,addup,addvideo].map((i)=>i.addEventListener('click',(event)=>this.insertChoice(no,event.target.id,0)));
+
+    }
+
+    
+
     addEventListen(){
-        document.getElementById('genfirstnode').addEventListener('click',()=>this.generateFirstLevelNode('containerTags',0))
+        // document.getElementById('genfirstnode').addEventListener('click',()=>this.generateFirstLevelNode('containerTags',0))
 
-        document.getElementById('insertlast').addEventListener('click',()=>this.insertlast('tableTags',0))
+        // document.getElementById('insertlast').addEventListener('click',()=>this.insertlast('tableTags',0))
 
-        document.getElementById('insertfirst').addEventListener('click',()=>this.insertBefore('containerTags',0))
+        // document.getElementById('insertfirst').addEventListener('click',()=>this.insertBefore('containerTags',0))
 
-        document.getElementById('insertchoice').addEventListener('click',()=>this.insertChoice(3,'containerTags',0))
+        // document.getElementById('insertchoice').addEventListener('click',()=>this.insertChoice(3,'containerTags',0))
 
         
 
@@ -115,124 +178,12 @@ launcher.addEventListen()
 
 
 
-/*
-function pointAndKill(event){
-    editor.addEventListener('click',()=>console.log(event.target))
-}
-
-pointAndKill()
-*/
-
-class NodeCreation{
-
-    constructor(tag_category,index) {
-        this.tag_category=tag_category
-        this.index=index
-    }
-
-    createNodes(){
-        let heading=['h1','h2','h3','h4','h5','h6'].map((i)=>document.createElement(i))
-        let texttags=['p','b','u','i','br','hr','strong','em','pre','acronym','samp','var','cite','address','blockquote','bdo','ins','del','dfn','kdb','footer','header','frameset','frame','html'].map((i)=>document.createElement(i) )
-        var linkTag=['a','base'].map((i)=>document.createElement(i))
-        let ImagObjTag=['img','area','map','param','object','video'].map((i)=>document.createElement(i))
-        let listtag=['ul','ol','li','dl','dt','dd'].map((i)=>document.createElement(i))
-        let TableTag=['table','tr','td','th','tbody','thead','tfoot','col','colgroup','caption'].map((i)=>document.createElement(i))
-        let formTag=['form','input','textarea','select','option','optgroup','button','label','fieldset','legend'].map((i)=>document.createElement(i))
-        let containerTags=['div'].map((i)=>document.createElement(i))
-
-        let features={
-            headingTag:heading,
-            textTags:texttags,
-            linkTags:linkTag,
-            ImageAndVideoTags:ImagObjTag,
-            listTags:listtag,
-            tableTags:TableTag,
-            // formTags:formTag,
-            // scriptTags:scripTag,
-            containerTags:containerTags
-        }
-
-        return features[this.tag_category][this.index]
-
-    }
-
-
-}
-
-
-class List{
-    constructor(no_of_li){
-        this.no_of_li=no_of_li
-    }
-
-        createListTag(){
-            let id=new Date().valueOf()
-          
-            let b=document.createElement('ul')
-            b.setAttribute('id',id)
-            editor.appendChild(b)
-            this.li(id,this.no_of_li)
-    }
-
-
-    li(id,no){
-        var grab_the_node=document.getElementById(id)
-        for(let i=0;i<no;i++){
-            var created_element=document.createElement('li')
-            grab_the_node.appendChild(created_element)
-        }
-        
-        
-        }
 
 
 
-}
 
 
-class Table{
-
-    constructor(columns,rows){
-        this.columns=columns
-        this.rows=rows
-    }
-
-    createTable(){
-        let id=new Date().valueOf()
-        var editor=document.getElementById('editor')
-        let mytable=document.createElement('table')
-        mytable.setAttribute('id',id)
-        editor.append(mytable)
-        this.tr(this.rows,id)
-       
-    }
-
-    tr(no,id){
-        let myarrayid=[]
-        for(let i=0;i<no;i++){
-            let myid=new Date().valueOf()
-            var mytr=document.createElement('tr')
-            mytr.setAttribute('id',myid)
-            document.getElementById(id).append(mytr)
-            myarrayid.push(myid)
-            
-        }
-        this.td(this.columns,no,myarrayid)
-    }
 
 
-    td(no_of_td,no_of_tr,id){
-        for(let y=0;y<no_of_tr;y++){
-     
-        
-                 for(let i=0;i<no_of_td;i++){
-                     let myid=new Date().valueOf()
-                     var mytd=document.createElement('td')
-                     mytd.setAttribute('id',myid)
-                    document.getElementById(id[y]).append(mytd)
-                 }
-     
-     }
-     }
+import { Table,List,NodeCreation} from "./myobject.js"
 
-}

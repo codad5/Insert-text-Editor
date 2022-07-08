@@ -1,4 +1,4 @@
-class Table{
+export class Table{
 
     constructor(columns,rows){
         this.columns=columns
@@ -46,7 +46,7 @@ class Table{
 }
 
 
-class List{
+export class List{
     constructor(no_of_li){
         this.no_of_li=no_of_li
     }
@@ -77,7 +77,7 @@ class List{
 
 
 
-class NodeCreation{
+export class NodeCreation{
 
     constructor(tag_category,index) {
         this.tag_category=tag_category
@@ -113,8 +113,3 @@ class NodeCreation{
 
 }
 
-
-
-
-
-// export {Table,List,NodeCreation}

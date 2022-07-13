@@ -1,21 +1,35 @@
 // this is function i created to aid easy call of dom elements
 // import { $ } from './modules/selector.js'
 // import { $, jQuery } from 'jquery';
-const addNewTableRow = (firstRow, noOfColumn = 3) => {
+const addNewTableRow = (tableNode, noOfColumn = 3) => {
     let i = 0, columnParams = {}
-    while (i < noOfColumn) {
-        console.log(i)
-        let columnID = new Date().valueOf()
-        let column = document.createElement('td')
-        columnParams[`fr${i}`] = `td${columnID}`
-        column.setAttribute('id', `td${columnID}`)
-        // column.appendChild(document.createTextNode(''))
-        firstRow.appendChild(column)
-        column.innerHTML = '&nbsp;'
-        i++
+    // while (i < noOfColumn) {
+    //     console.log(i)
+    //     let columnID = new Date().valueOf()
+    //     let column = document.createElement('td')
+    //     columnParams[`fr${i}`] = `td${columnID}`
+    //     column.setAttribute('id', `td${columnID}`)
+    //     // column.appendChild(document.createTextNode(''))
+    //     firstRow.appendChild(column)
+    //     column.innerHTML = '&nbsp;'
+    //     i++
 
+    // }
+    let id
+    id = new Date().valueOf()
+    id = `tr${id}`
+    const newRow = tableNode.insertRow()
+    newRow.setAttribute('id', id)
+    for(i = 0; i < noOfColumn; i++){
+        id = new Date().valueOf()
+        id = `td${id}`
+        columnParams[`fr${i}`] = id
+        const newCell = newRow.insertCell(i)
+        newCell.innerHTML = '&nbsp;'
+        newCell.setAttribute('id', id)
+        
     }
-    return { ...columnParams }
+    return { rowID:id, ...columnParams }
 }
 /**
  * 
@@ -123,6 +137,18 @@ function InsertEditor(editorNode) {
         
         this.setCaret()
     }
+    this.resetStatus = (all = true, ...tobeReset) => {
+        
+        if(all){
+            this.boldStatus = false
+            this.italicStatus = false
+            this.underLineStatus = false
+            return true
+        }
+        return tobeReset.map(i => !i)
+
+        
+    }
     /**
      * This is a function that add a  new bold tag to the editor
      * @param {*} e
@@ -166,6 +192,8 @@ function InsertEditor(editorNode) {
         const { selector, newStatus, parentNode } = this.newInlineNodeCreator(null, 'p')
         // underLineStatus = newStatus
         this.setCaret(selector == null ? null : `#${selector}`);
+        // this.boldS
+        this.resetStatus()
     } 
     this.newTable = (e) => {
         e.preventDefault()
@@ -174,8 +202,9 @@ function InsertEditor(editorNode) {
         console.log($(`#${tableNodeId}`))
         console.log($(`#${tableNodeId}`).querySelectorAll('td'))
 
-        $(`#${tableNodeId}`).querySelectorAll('td').forEach(i => this.addStyle(i, {border:'solid', borderWidth:'1px', borderColor:"#000"}))
-        this.addStyle($(`#${tableNodeId}`), { border: 'solid', borderWidth: '2px', borderColor: "#000", borderCollapse :'collapse', maxWidth:'100%' })
+        $(`#${tableNodeId}`).querySelectorAll('td').forEach(i => this.addStyle(i, {border:'solid', borderWidth:'2px', borderColor:"#000"}))
+        this.addStyle($(`#${tableNodeId}`), { border: 'solid', borderWidth: '3px', borderColor: "#000", borderCollapse :'collapse', maxWidth:'100%' })
+        $(`#${tableNodeId}`).addEventListener('focus', console.log('hello'))
 
     }
     /**
@@ -245,7 +274,7 @@ function InsertEditor(editorNode) {
         insertTableNode = currentNodeActive
         let tablePrep = document.createElement('table')
         let firstRow = document.createElement('tr'), i = 0, columnParams = {}
-        columnParams = addNewTableRow(firstRow, noOfColumn)
+        columnParams = addNewTableRow(tablePrep, noOfColumn)
         // while(i < noOfColumn){
         //     console.log(i)
         //     let columnID = new Date().valueOf()
@@ -271,25 +300,33 @@ function InsertEditor(editorNode) {
         let id = new Date().valueOf()
         id = `t${id}`
         tablePrep.setAttribute('id', id)
-        tablePrep.appendChild(firstRow)
+        // tablePrep.appendChild(firstRow)
         insertTableNode.append(tablePrep)
-        tablePrep.addEventListener('input', (e) => {
+        $(`#${id}`).addEventListener('click', (e) => {
+            console.log(id)
             console.log('hi')
-            this.tableFuction(e.target)
+            this.tableFuction($(`#${id}`))
         })
         return { tableNodeId: id, ...columnParams }
     }
     this.tableFuction = (tableNode) => {
         // tableNode = tableNode
+        console.log(tableNode)
+        
         let lastRow = tableNode.querySelectorAll('tr'), noOfColumn;
+        console.log('worked here')
         lastRow = lastRow[lastRow.length - 1]
-        let firstCellLastRow = lastRow.querySelctorAll('td')
+        console.log(lastRow, "calling last row")
+        let firstCellLastRow = lastRow.querySelectorAll('td')
         noOfColumn = firstCellLastRow.length
-        firstCellLastRow = lastRow.querySelctorAll('td')
-        if(firstCellLastRow.split(' ').length > 1){
+        firstCellLastRow = lastRow.querySelector('td')
+        if(firstCellLastRow.innerHTML.trim().length > 1){
             // tableNode.
-            addNewTableRow(lastRow, noOfColumn)
+            // addNewTableRow(lastRow, noOfColumn)
+            addNewTableRow(tableNode, noOfColumn)
         }
+        console.log(tableNode)
+        tableNode.querySelectorAll('td').forEach(i => this.addStyle(i, {border:"solid 2px black", minHeight:'30px', minWidth:`${100 / noOfColumn}px`}))
     }
     /**
      * This is a method for adding inline style to the editor and its elements

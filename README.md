@@ -5,7 +5,7 @@
 ## How to Use
 > link our module with a script tag at the bottom of your html file
 ```html
-<script type="module" src="insertModule/index.js"></script>
+<script type="module" src="https://github.com/codad5/Insert-text-Editor/insert/index.js"></script>
 ```
  > Create your Parent div 
  ```html
@@ -46,9 +46,9 @@
 >> OR run live-server if you are using vs-code live server extension
 
 ### Begin development 
-To being developent the main script is at `./insertModule/main.js`
+To being developent the main script is at `./insert/main.js`
 
-The `./insertModule/index.js` is a script for adding Eventlistener
+The `./insert/index.js` is a script for adding Eventlistener
 
 The `index.html` is not to be edited as it is just a template
 

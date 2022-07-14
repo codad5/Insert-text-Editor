@@ -43,6 +43,10 @@
 ```bash
     $ npx serve
 ```
+>> If you have php installed
+```bash
+    $ php -S localhost:8080
+```
 >> OR run live-server if you are using vs-code live server extension
 
 ### Begin development 

@@ -1,6 +1,10 @@
 // this is function i created to aid easy call of dom elements
 // import { $ } from './modules/selector.js'
 // import { $, jQuery } from 'jquery';
+/**
+ * @param tableNode This is the Node Element in which the new Row is to be added to 
+ * @param NoOfColumn This is the number of column each row should have 
+ */
 const addNewTableRow = (tableNode, noOfColumn = 3) => {
     let i = 0, columnParams = {}
     // while (i < noOfColumn) {
@@ -27,7 +31,9 @@ const addNewTableRow = (tableNode, noOfColumn = 3) => {
         const newCell = newRow.insertCell(i)
         newCell.innerHTML = '&nbsp;'
         newCell.setAttribute('id', id)
-        
+        if(i == 0 ){
+            
+        }
     }
     return { rowID:id, ...columnParams }
 }
@@ -98,19 +104,39 @@ function InsertEditor(editorNode) {
     this.inserteditorTemplate = (RootNode = $('[data-editor-frame]')) => {
         RootNode.innerHTML =  `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <style>
+                .Insert-props .insert-control-panel button{
+                    position:relative;
+                }
+                .Insert-props .insert-control-panel button:hover::after{
+                    content:attr(data-info)" ";
+                    position:absolute;
+                    background:#555;
+                    display:inline-block;
+                    color:#eee;
+                    padding:2px;
+                    font-size:0.5rem;
+                    z-index:1000;
+                    width:clamp(20px, 35px, 100px);
+                    text-overflow:word-break;
+                    overflow-wrap:anywhere;
+
+                    
+                }
+            </style>
             <div class="Insert-props" >
             <div class="insert-control-panel">
             <!-- Some action button -->
-            <button type="button" class="fa fa-bold" aria-hidden="true" data-btn-bold></button>
-            <button type="button" class="fa fa-italic" aria-hidden="true" data-btn-itl></button>
-            <button type="button" class="fa fa-underline" aria-hidden="true" data-btn-und></button>
-            <button type="button" class="fa fa-paragraph" aria-hidden="true" data-btn-prg></button>
-            <button type="button" class="fa fa-align-left" aria-hidden="true" data-btn-align="left"></button>
-            <button type="button" class="fa fa-align-right" aria-hidden="true" data-btn-align="right"></button>
-            <button type="button" class="fa fa-align-center" aria-hidden="true" data-btn-align="center"></button>
-            <button type="button" class="fa fa-list-ul" aria-hidden="true" data-btn-list="ul"></button>
-            <button type="button" class="fa fa-list-ol" aria-hidden="true" data-btn-list="ol"></button>
-            <button type="button" class="fa fa-table" aria-hidden="true" data-btn-table></button>
+            <button type="button" class="fa fa-bold" aria-hidden="true" data-btn-bold data-info="bold"></button>
+            <button type="button" class="fa fa-italic" aria-hidden="true" data-btn-itl data-info="italic"></button>
+            <button type="button" class="fa fa-underline" aria-hidden="true" data-btn-und data-info="underline"></button>
+            <button type="button" class="fa fa-paragraph" aria-hidden="true" data-btn-prg data-info="paragraph"></button>
+            <button type="button" class="fa fa-align-left" aria-hidden="true" data-btn-align="left" data-info="text-align:left"></button>
+            <button type="button" class="fa fa-align-right" aria-hidden="true" data-btn-align="right" data-info="text-align:right"></button>
+            <button type="button" class="fa fa-align-center" aria-hidden="true" data-btn-align="center" data-info="text-align:center"></button>
+            <button type="button" class="fa fa-list-ul" aria-hidden="true" data-btn-list="ul"  data-info="list:unordered"></button>
+            <button type="button" class="fa fa-list-ol" aria-hidden="true" data-btn-list="ol" data-info="list:ordered"></button>
+            <button type="button" class="fa fa-table" aria-hidden="true" data-btn-table data-info="table"></button>
             <input type="color" data-btn-color value="#000000" />
             </div>
             <!-- The editor -->
@@ -191,19 +217,23 @@ function InsertEditor(editorNode) {
         e.preventDefault()
         const { selector, newStatus, parentNode } = this.newInlineNodeCreator(null, 'p')
         // underLineStatus = newStatus
+        this.addStyle($(`#${selector}`), {width:'100%', position:'relative'})
         this.setCaret(selector == null ? null : `#${selector}`);
         // this.boldS
         this.resetStatus()
     } 
+    /**
+     * this is a method to handke table creation click event 
+     */
     this.newTable = (e) => {
         e.preventDefault()
         const { tableNodeId, fr0 } = this.tableNodeCreation()
         this.setCaret(`#${fr0}`)
-        console.log($(`#${tableNodeId}`))
-        console.log($(`#${tableNodeId}`).querySelectorAll('td'))
+        // console.log($(`#${tableNodeId}`))
+        // console.log($(`#${tableNodeId}`).querySelectorAll('td'))
 
         $(`#${tableNodeId}`).querySelectorAll('td').forEach(i => this.addStyle(i, {border:'solid', borderWidth:'2px', borderColor:"#000"}))
-        this.addStyle($(`#${tableNodeId}`), { border: 'solid', borderWidth: '3px', borderColor: "#000", borderCollapse :'collapse', maxWidth:'100%' })
+        this.addStyle($(`#${tableNodeId}`), { border: 'solid', borderWidth: '3px', borderColor: "#000", borderCollapse :'collapse',width:'90%', alignSelf:'center' })
         $(`#${tableNodeId}`).addEventListener('focus', console.log('hello'))
 
     }
@@ -269,24 +299,18 @@ function InsertEditor(editorNode) {
         const { selector } = this.newInlineNodeCreator(null, wantedtag)
         this.setCaret(`#${selector}`)
     }
+    /**
+     * This is a method to create a new Table 
+     * @param noOfColumn This is the NUmber of column the table should have 
+     * @param noOfRow This is the Number of Row required 
+     */
     this.tableNodeCreation = (noOfColumn = 3, noOfRow = 2) => {
         let currentNodeActive = window.getSelection()?.anchorNode?.parentElement ?? $('[data-editor-block]'),
         insertTableNode = currentNodeActive
         let tablePrep = document.createElement('table')
         let firstRow = document.createElement('tr'), i = 0, columnParams = {}
         columnParams = addNewTableRow(tablePrep, noOfColumn)
-        // while(i < noOfColumn){
-        //     console.log(i)
-        //     let columnID = new Date().valueOf()
-        //     let column = document.createElement('td') 
-        //     columnParams[`fr${i}`] = `td${columnID}`
-        //     column.setAttribute('id', `td${columnID}`)
-        //     // column.appendChild(document.createTextNode(''))
-        //     firstRow.appendChild(column)
-        //     column.innerHTML = '&nbsp;'
-        //     i++
-            
-        // }
+        
         i = 0
         console.log(columnParams)
         let tablePropPanel = `
@@ -309,6 +333,10 @@ function InsertEditor(editorNode) {
         })
         return { tableNodeId: id, ...columnParams }
     }
+    /**
+     * This is method that add some set of function to a table like auto add row
+     * @param tableNode This is the Table Element the function is to be added to 
+     */
     this.tableFuction = (tableNode) => {
         // tableNode = tableNode
         console.log(tableNode)

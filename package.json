@@ -9,8 +9,8 @@
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "watch:ts" : "tsc -p ./typescript --outDir ./out -w --pretty",
-    "build:ts" : "tsc -b ./typescript  -w --pretty"
+    "watch:ts": "tsc -p ./typescript --outDir ./out -w --pretty",
+    "build:ts": "tsc -b ./typescript  -w --pretty"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/codad5/Insert-text-Editor#readme",
   "devDependencies": {
+    "@types/jquery": "^3.5.14",
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.2"
   },

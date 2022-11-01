@@ -1,3 +1,4 @@
+// import $ from 'jquery'  
 class InsertEditor {
     constructor(settings) {
         this.frame = document.querySelector(`[data-editor-frame]`);
@@ -199,23 +200,28 @@ class InsertEditor {
         return this.setCaret(`#${id}`);
     }
     handleHighlighted(NodeType) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
         let TAG = this.getNodeTag(NodeType).toLowerCase();
         let parentNode = (_b = (_a = window.getSelection()) === null || _a === void 0 ? void 0 : _a.anchorNode) === null || _b === void 0 ? void 0 : _b.parentNode;
         let highlightedNode = (_c = window.getSelection()) === null || _c === void 0 ? void 0 : _c.anchorNode;
-        if (((_e = (_d = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _d === void 0 ? void 0 : _d.nodeName) === null || _e === void 0 ? void 0 : _e.toLowerCase()) == TAG)
+        const range = (_e = (_d = window.getSelection()) === null || _d === void 0 ? void 0 : _d.getRangeAt(0)) !== null && _e !== void 0 ? _e : (_f = document.getSelection()) === null || _f === void 0 ? void 0 : _f.getRangeAt(0);
+        if (((_h = (_g = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _g === void 0 ? void 0 : _g.nodeName) === null || _h === void 0 ? void 0 : _h.toLowerCase()) == TAG)
             TAG = "span";
-        let _text = (_g = (_f = window.getSelection()) === null || _f === void 0 ? void 0 : _f.toString()) !== null && _g !== void 0 ? _g : '', id = `${TAG}${new Date().valueOf()}`.toLowerCase();
+        let _text = (_k = (_j = window.getSelection()) === null || _j === void 0 ? void 0 : _j.toString()) !== null && _k !== void 0 ? _k : '', id = `${TAG}${new Date().valueOf()}`.toLowerCase();
         const newElement = document.createElement(TAG);
         newElement.setAttribute('id', `${id}`);
-        (_h = window.getSelection()) === null || _h === void 0 ? void 0 : _h.deleteFromDocument();
-        console.log((_j = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _j === void 0 ? void 0 : _j.nodeName, TAG);
-        if (((_l = (_k = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _k === void 0 ? void 0 : _k.nodeName) === null || _l === void 0 ? void 0 : _l.toLowerCase()) == this.getNodeTag(NodeType).toLowerCase()) {
+        (_l = window.getSelection()) === null || _l === void 0 ? void 0 : _l.deleteFromDocument();
+        console.log((_m = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _m === void 0 ? void 0 : _m.nodeName, TAG);
+        if (((_p = (_o = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _o === void 0 ? void 0 : _o.nodeName) === null || _p === void 0 ? void 0 : _p.toLowerCase()) == this.getNodeTag(NodeType).toLowerCase()) {
             // if(highlightedNode?.nodeName?.toLowerCase() == "#text"){ parentNode?.appendChild(newElement)}
-            (_m = parentNode === null || parentNode === void 0 ? void 0 : parentNode.parentNode) === null || _m === void 0 ? void 0 : _m.appendChild(newElement);
+            (_q = parentNode === null || parentNode === void 0 ? void 0 : parentNode.parentNode) === null || _q === void 0 ? void 0 : _q.appendChild(newElement);
         }
         else {
-            highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.replaceWith(newElement);
+            // highlightedNode?.replaceWith(newElement)
+            if (range != null) {
+                // var newNode = $(`<${TAG}>  </${TAG}>`)[0];
+                range.surroundContents(newElement);
+            }
         }
         newElement.innerHTML = _text;
         this.setCaret(`#${id}`);

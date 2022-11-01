@@ -1,6 +1,5 @@
 import type { EditorSettings, action_buttons, element_tagName } from "./components/types.js";
-
-
+// import $ from 'jquery'  
 class InsertEditor{
     readonly frame : Element|null = document.querySelector(`[data-editor-frame]`);
     readonly form_name : String|null = null;
@@ -204,6 +203,7 @@ class InsertEditor{
         let TAG = this.getNodeTag(NodeType).toLowerCase()
         let parentNode = window.getSelection()?.anchorNode?.parentNode
         let highlightedNode : HTMLElement|Node|null|undefined = window.getSelection()?.anchorNode  
+        const range = window.getSelection()?.getRangeAt(0) ?? document.getSelection()?.getRangeAt(0)
         if(highlightedNode?.parentNode?.nodeName?.toLowerCase() == TAG) TAG = "span";
         let _text = window.getSelection()?.toString() ?? '',
             id =  `${TAG}${new Date().valueOf()}`.toLowerCase()
@@ -215,7 +215,11 @@ class InsertEditor{
             // if(highlightedNode?.nodeName?.toLowerCase() == "#text"){ parentNode?.appendChild(newElement)}
             parentNode?.parentNode?.appendChild(newElement)
         }else{
-            highlightedNode?.replaceWith(newElement)
+            // highlightedNode?.replaceWith(newElement)
+            if (range != null) {
+            // var newNode = $(`<${TAG}>  </${TAG}>`)[0];
+            range.surroundContents(newElement);
+            }
         }
         newElement.innerHTML = _text
         this.setCaret(`#${id}`)

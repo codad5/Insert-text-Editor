@@ -1,19 +1,22 @@
 import {InsertEditor, $} from './main.js'
-// import $  from '../node_modules/jquery/dist/jquery.js'
-// const $ = (selector) => document.querySelector(selector)
 
 
 const AutoEditor = new InsertEditor('[data-editor-block]')
+
 // inserting the editor into the right frame 
-// $('[data-editor-frame]').innerHTML = InsertEditor.InserteditorTemplate();
 AutoEditor.inserteditorTemplate()
+
 $('[data-btn-bold]').addEventListener('click', AutoEditor.newBold)
+
 //  Event listener for the italic button
 $('[data-btn-itl]').addEventListener('click', AutoEditor.newItalic)
+
 //  Event listener for the underline button
 $('[data-btn-und]').addEventListener('click', AutoEditor.newUnderLine)
+
 //  Event listener for the new paragraph button
 $('[data-btn-prg]').addEventListener('click', AutoEditor.newParagraph)
+
 //  Event listener for the align button
 // $('[data-btn-align]').addEventListener('click', alignText)
 document.querySelectorAll('[data-btn-align]').forEach(item => {

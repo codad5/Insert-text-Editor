@@ -7,18 +7,6 @@
  */
 const addNewTableRow = (tableNode, noOfColumn = 3) => {
     let i = 0, columnParams = {}
-    // while (i < noOfColumn) {
-    //     console.log(i)
-    //     let columnID = new Date().valueOf()
-    //     let column = document.createElement('td')
-    //     columnParams[`fr${i}`] = `td${columnID}`
-    //     column.setAttribute('id', `td${columnID}`)
-    //     // column.appendChild(document.createTextNode(''))
-    //     firstRow.appendChild(column)
-    //     column.innerHTML = '&nbsp;'
-    //     i++
-
-    // }
     let id
     id = new Date().valueOf()
     id = `tr${id}`
@@ -115,7 +103,7 @@ function InsertEditor(editorNode) {
                     display:inline-block;
                     color:#eee;
                     padding:2px;
-                    font-size:0.5rem;
+                    font-size:0.6rem;
                     z-index:1000;
                     width:clamp(20px, 35px, 100px);
                     text-overflow:word-break;
@@ -127,11 +115,11 @@ function InsertEditor(editorNode) {
             <div class="Insert-props" >
             <div class="insert-control-panel">
             <!-- Some action button -->
-            <button type="button" class="fa fa-bold" aria-hidden="true" data-btn-bold data-info="bold"></button>
-            <button type="button" class="fa fa-italic" aria-hidden="true" data-btn-itl data-info="italic"></button>
-            <button type="button" class="fa fa-underline" aria-hidden="true" data-btn-und data-info="underline"></button>
-            <button type="button" class="fa fa-paragraph" aria-hidden="true" data-btn-prg data-info="paragraph"></button>
-            <button type="button" class="fa fa-align-left" aria-hidden="true" data-btn-align="left" data-info="text-align:left"></button>
+            <button type="button" title="bold" class="fa fa-bold" aria-hidden="true" data-btn-bold data-info="bold"></button>
+            <button type="button" title="italic" class="fa fa-italic" aria-hidden="true" data-btn-itl data-info="italic"></button>
+            <button type="button" title="underline" class="fa fa-underline" aria-hidden="true" data-btn-und data-info="underline"></button>
+            <button type="button" title="new paragraph" class="fa fa-paragraph" aria-hidden="true" data-btn-prg data-info="paragraph"></button>
+            <button type="button" title="align left" class="fa fa-align-left" aria-hidden="true" data-btn-align="left" data-info="text-align:left"></button>
             <button type="button" class="fa fa-align-right" aria-hidden="true" data-btn-align="right" data-info="text-align:right"></button>
             <button type="button" class="fa fa-align-center" aria-hidden="true" data-btn-align="center" data-info="text-align:center"></button>
             <button type="button" class="fa fa-list-ul" aria-hidden="true" data-btn-list="ul"  data-info="list:unordered"></button>
@@ -216,10 +204,8 @@ function InsertEditor(editorNode) {
     this.newParagraph = (e) => {
         e.preventDefault()
         const { selector, newStatus, parentNode } = this.newInlineNodeCreator(null, 'p')
-        // underLineStatus = newStatus
         this.addStyle($(`#${selector}`), {width:'100%', position:'relative'})
         this.setCaret(selector == null ? null : `#${selector}`);
-        // this.boldS
         this.resetStatus()
     } 
     /**
@@ -229,12 +215,9 @@ function InsertEditor(editorNode) {
         e.preventDefault()
         const { tableNodeId, fr0 } = this.tableNodeCreation()
         this.setCaret(`#${fr0}`)
-        // console.log($(`#${tableNodeId}`))
-        // console.log($(`#${tableNodeId}`).querySelectorAll('td'))
-
         $(`#${tableNodeId}`).querySelectorAll('td').forEach(i => this.addStyle(i, {border:'solid', borderWidth:'2px', borderColor:"#000"}))
         this.addStyle($(`#${tableNodeId}`), { border: 'solid', borderWidth: '3px', borderColor: "#000", borderCollapse :'collapse',width:'90%', alignSelf:'center' })
-        $(`#${tableNodeId}`).addEventListener('focus', console.log('hello'))
+        $(`#${tableNodeId}`).querySelectorAll('td').forEach( e => e.addEventListener('keyup', console.log('hello')))
 
     }
     /**
@@ -307,6 +290,7 @@ function InsertEditor(editorNode) {
     this.tableNodeCreation = (noOfColumn = 3, noOfRow = 2) => {
         let currentNodeActive = window.getSelection()?.anchorNode?.parentElement ?? $('[data-editor-block]'),
         insertTableNode = currentNodeActive
+        if (!$('[data-editor-block]').contains(currentNodeActive)) currentNodeActive = $('[data-editor-block]')
         let tablePrep = document.createElement('table')
         let firstRow = document.createElement('tr'), i = 0, columnParams = {}
         columnParams = addNewTableRow(tablePrep, noOfColumn)
@@ -408,14 +392,15 @@ function InsertEditor(editorNode) {
     this.newInlineNodeCreator = (NodeBol, NodeTypeModel = 'span') => {
         //This is to get the node where the editor cursor is on
         let currentNodeActive = window.getSelection()?.anchorNode?.parentElement ?? editorNode
-        // console.log(currentNodeActive)
 
+        if (!$('[data-editor-block]').contains(currentNodeActive)) currentNodeActive = $('[data-editor-block]')
+        
         NodeBol = !NodeBol
-        // Initializing the variable for the id of the new node to be created
+
         let id = null
-        // e.preventDefault()
-        // console.log('hello')
+
         $('[data-editor-block]').innerHTML = $('[data-editor-block]')?.innerHTML.trim()
+
         // This is to filter and correct any type from the passed param 
         NodeTypeModel = NodeTypeModel.toLowerCase().trim();
         // This is a default node type
@@ -426,19 +411,21 @@ function InsertEditor(editorNode) {
         para = document.createElement(NodeType);
         // setting the node type to the given param 
         if (NodeBol || NodeBol == null) {
+            console.clear()
+            console.log('i am runnig because Nodebol is NUll')
             NodeType = NodeTypeModel
         }
         else{
         // else{
+            console.clear()
             let jj = 0
-            // console.log('hello', currentNodeActive.tagName.toLowerCase(), `== ${NodeTypeModel}`)
             while (currentNodeActive.tagName.toLowerCase() == NodeTypeModel && jj < 10){
                 console.log(jj, currentNodeActive.parentElement, currentNodeActive)
                 if (currentNodeActive.parentElement == null) {
                     currentNodeActive = $('[data-editor-block]')
+                    console.log(currentNodeActive)
                     continue;
                 }
-                console.log(currentNodeActive.parentElement.tagName)
                 if (currentNodeActive.tagName.toLowerCase() == currentNodeActive.parentElement.tagName.toLowerCase()){
                     // currentNodeActive = 
                     console.log(currentNodeActive.parentElement.tagName.toLowerCase(), `>> ${currentNodeActive.tagName.toLowerCase()}`)
@@ -464,25 +451,6 @@ function InsertEditor(editorNode) {
         // para.appendChild(document.createTextNode("&nbsp;"))
         // just a duplicate Code
         if (this.noRootNode.includes(NodeType)) currentNodeActive = $('[data-editor-block]')
-        
-    
-        // currentNodeActive.appendChild(para);
-        // if bool is false that means the node has to be turned off and create a new span tag under the parent node of the node to be turn off
-        // if(NodeBol == false){
-        //     // console.log(currentNodeActive.parentElement)
-        //     // incase the parent Node does not exist it will append the new node under the main editor
-        //     if (currentNodeActive.parentElement == null) {
-        //         $('[data-editor-block]').appendChild(para)
-        //     }else{
-
-        //         currentNodeActive.parentElement.appendChild(para) 
-        //     }
-        // }else{
-        //     // incase the node is not to be turn off
-        //     currentNodeActive.appendChild(para)
-            
-        // }
-        // currentNodeActive.appendChild(para);
         currentNodeActive.id ? $(`#${currentNodeActive.id}`).appendChild(para) :  currentNodeActive.appendChild(para);
         // console.log(currentNodeActive)
         // this is incase a node must have a default default child node like 'ol for orderlist' must have a child node 'li'
@@ -519,6 +487,5 @@ function InsertEditor(editorNode) {
 
     }
 }
-const sum = (x, y) => x + y
 
-export {InsertEditor, $, sum}
+export {InsertEditor, $}

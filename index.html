@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Text Editor</title>
+	<!-- <script deffer type="application/javascript" src="typescript/main.ts"></script> -->
 </head>
 <body>
 <form method="post" action="test/test.php">
@@ -13,7 +14,13 @@
     
 
 <!-- The main script to run the editor -->
-<script type="module" src="insert/index.js"></script>
+<!-- <script type="module" src="insert/index.js"></script> -->
+<script type="module">
+	import {InsertEditor} from "./out/index.js"
+	const newEditor = new InsertEditor({})
+	console.log(newEditor)
+	newEditor.printEditorHTML()
+</script>
 
 </body>
 </html>

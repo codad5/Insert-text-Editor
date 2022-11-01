@@ -8,7 +8,9 @@
   },
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "watch:ts" : "tsc -p ./typescript --outDir ./out -w --pretty",
+    "build:ts" : "tsc -b ./typescript  -w --pretty"
   },
   "repository": {
     "type": "git",

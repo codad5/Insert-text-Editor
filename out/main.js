@@ -23,6 +23,7 @@ class InsertEditor {
             paragraph: false,
         };
         this.editor = document.querySelector(`[data-editor-block]`);
+        this.action_has_on_off = ['bold', 'italic', 'underline'].map(v => v.toLowerCase());
         this.action_buttons = {
             bold: document.querySelector(`[${this.button_selectors.bold}]`),
             italic: document.querySelector(`[${this.button_selectors.italic}]`),
@@ -198,7 +199,7 @@ class InsertEditor {
         newElement.innerHTML = "&nbsp;";
         console.log(newElement);
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`];
-        return this.setCaret(`#${id}`);
+        return this.setCaret(`#${id}`).turnButton(NodeType);
     }
     handleHighlighted(NodeType) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
@@ -224,6 +225,21 @@ class InsertEditor {
         }
         newElement.innerHTML = _text;
         this.setCaret(`#${id}`);
+    }
+    turnButton(NodeType) {
+        let bg_color = this.action_status[`${NodeType}`] ? '#554' : '#f0f0f0';
+        let text_color = this.action_status[`${NodeType}`] ? '#f0f0f0' : '#554';
+        if (!this.action_has_on_off.includes(NodeType.toLowerCase()))
+            return this;
+        return this.addStyle(this.action_buttons[`${NodeType}`], `
+            background:${bg_color};
+            color:${text_color}
+        `);
+    }
+    addStyle(domElement, style) {
+        console.log(style);
+        domElement === null || domElement === void 0 ? void 0 : domElement.setAttribute('style', style);
+        return this;
     }
     getNodeTag(NodeType) {
         return this.action_tags[`${NodeType}`];

@@ -25,6 +25,7 @@ class InsertEditor{
         paragraph: false,
     }
     editor : Element|null = document.querySelector(`[data-editor-block]`);
+    action_has_on_off : String[] = ['bold', 'italic', 'underline'].map(v => v.toLowerCase())
     action_buttons : action_buttons<Element|null>  = {
         bold: document.querySelector(`[${this.button_selectors.bold}]`),
         italic: document.querySelector(`[${this.button_selectors.italic}]`),
@@ -197,7 +198,7 @@ class InsertEditor{
         newElement.innerHTML = "&nbsp;";
         console.log(newElement)
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`]
-        return this.setCaret(`#${id}`)
+        return this.setCaret(`#${id}`).turnButton(NodeType)
         
         
     }
@@ -223,6 +224,21 @@ class InsertEditor{
         }
         newElement.innerHTML = _text
         this.setCaret(`#${id}`)
+    }
+    private turnButton(NodeType: element_tagName){
+        let bg_color = this.action_status[`${NodeType}`] ? '#554' : '#f0f0f0'
+        let text_color = this.action_status[`${NodeType}`] ? '#f0f0f0' : '#554' 
+        if(!this.action_has_on_off.includes(NodeType.toLowerCase())) return this
+        return this.addStyle(this.action_buttons[`${NodeType}`], `
+            background:${bg_color};
+            color:${text_color}
+        `)
+        
+    }
+    addStyle(domElement : Element|null, style: string){
+        console.log(style)
+        domElement?.setAttribute('style', style)
+        return this
     }
     private getNodeTag(NodeType : element_tagName){
         return this.action_tags[`${NodeType}`];

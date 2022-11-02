@@ -200,7 +200,7 @@ class InsertEditor {
         return this.setCaret(`#${id}`);
     }
     handleHighlighted(NodeType) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         let TAG = this.getNodeTag(NodeType).toLowerCase();
         let parentNode = (_b = (_a = window.getSelection()) === null || _a === void 0 ? void 0 : _a.anchorNode) === null || _b === void 0 ? void 0 : _b.parentNode;
         let highlightedNode = (_c = window.getSelection()) === null || _c === void 0 ? void 0 : _c.anchorNode;
@@ -212,11 +212,16 @@ class InsertEditor {
         newElement.setAttribute('id', `${id}`);
         (_l = window.getSelection()) === null || _l === void 0 ? void 0 : _l.deleteFromDocument();
         console.log((_m = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _m === void 0 ? void 0 : _m.nodeName, TAG);
+        //this is to reverse currenct state i.e from bold to unbold
         if (((_p = (_o = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _o === void 0 ? void 0 : _o.nodeName) === null || _p === void 0 ? void 0 : _p.toLowerCase()) == this.getNodeTag(NodeType).toLowerCase()) {
             // if(highlightedNode?.nodeName?.toLowerCase() == "#text"){ parentNode?.appendChild(newElement)}
-            (_q = parentNode === null || parentNode === void 0 ? void 0 : parentNode.parentNode) === null || _q === void 0 ? void 0 : _q.appendChild(newElement);
+            console.log('running this now');
+            // parentNode?.parentNode?.appendChild(newElement)
+            (_r = (_q = range === null || range === void 0 ? void 0 : range.commonAncestorContainer) === null || _q === void 0 ? void 0 : _q.parentElement) === null || _r === void 0 ? void 0 : _r.replaceWith(newElement);
+            // range?.surroundContents(newElement);
         }
         else {
+            console.log('running');
             // highlightedNode?.replaceWith(newElement)
             if (range != null) {
                 // var newNode = $(`<${TAG}>  </${TAG}>`)[0];

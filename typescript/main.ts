@@ -211,10 +211,15 @@ class InsertEditor{
         newElement.setAttribute('id', `${id}`)
         window.getSelection()?.deleteFromDocument()
         console.log(highlightedNode?.parentNode?.nodeName , TAG)
+        //this is to reverse currenct state i.e from bold to unbold
         if(highlightedNode?.parentNode?.nodeName?.toLowerCase() == this.getNodeTag(NodeType).toLowerCase()){
             // if(highlightedNode?.nodeName?.toLowerCase() == "#text"){ parentNode?.appendChild(newElement)}
-            parentNode?.parentNode?.appendChild(newElement)
+            console.log('running this now')
+            // parentNode?.parentNode?.appendChild(newElement)
+            range?.commonAncestorContainer?.parentElement?.replaceWith(newElement)
+            // range?.surroundContents(newElement);
         }else{
+            console.log('running')
             // highlightedNode?.replaceWith(newElement)
             if (range != null) {
             // var newNode = $(`<${TAG}>  </${TAG}>`)[0];

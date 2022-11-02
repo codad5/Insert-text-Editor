@@ -178,7 +178,7 @@ class InsertEditor{
         if(highlighted){
             return this.handleHighlighted(NodeType)
         }
-        if(this.action_status[`${NodeType}`]) TAG = "div".toLowerCase()
+        if(this.action_status[`${NodeType}`]) TAG = "span".toLowerCase()
         const newElement : Element = document.createElement(TAG),
         id =  `${TAG}${new Date().valueOf()}`.toLowerCase()
         newElement.setAttribute("id", id)
@@ -191,7 +191,9 @@ class InsertEditor{
             }
             if(parent?.tagName.toLowerCase() != TAG.toLowerCase() && count > 15) parent = this.editor
         }
-        parent?.appendChild(newElement)
+        const range = window.getSelection()?.getRangeAt(0)
+        range ? range.insertNode(newElement) : parent?.appendChild(newElement)
+        
         newElement.innerHTML = "&nbsp;";
         console.log(newElement)
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`]
@@ -213,18 +215,11 @@ class InsertEditor{
         console.log(highlightedNode?.parentNode?.nodeName , TAG)
         //this is to reverse currenct state i.e from bold to unbold
         if(highlightedNode?.parentNode?.nodeName?.toLowerCase() == this.getNodeTag(NodeType).toLowerCase()){
-            // if(highlightedNode?.nodeName?.toLowerCase() == "#text"){ parentNode?.appendChild(newElement)}
             console.log('running this now')
-            // parentNode?.parentNode?.appendChild(newElement)
             range?.commonAncestorContainer?.parentElement?.replaceWith(newElement)
-            // range?.surroundContents(newElement);
         }else{
             console.log('running')
-            // highlightedNode?.replaceWith(newElement)
-            if (range != null) {
-            // var newNode = $(`<${TAG}>  </${TAG}>`)[0];
-            range.surroundContents(newElement);
-            }
+            range?.surroundContents(newElement);
         }
         newElement.innerHTML = _text
         this.setCaret(`#${id}`)

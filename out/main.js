@@ -170,7 +170,7 @@ class InsertEditor {
         return this;
     }
     handleNodeCreation(NodeType) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         let TAG = this.getNodeTag(NodeType).toLowerCase();
         let parent = this.getCurrentNode();
         let highlighted = false;
@@ -180,7 +180,7 @@ class InsertEditor {
             return this.handleHighlighted(NodeType);
         }
         if (this.action_status[`${NodeType}`])
-            TAG = "div".toLowerCase();
+            TAG = "span".toLowerCase();
         const newElement = document.createElement(TAG), id = `${TAG}${new Date().valueOf()}`.toLowerCase();
         newElement.setAttribute("id", id);
         if (this.action_status[`${NodeType}`]) {
@@ -193,7 +193,8 @@ class InsertEditor {
             if ((parent === null || parent === void 0 ? void 0 : parent.tagName.toLowerCase()) != TAG.toLowerCase() && count > 15)
                 parent = this.editor;
         }
-        parent === null || parent === void 0 ? void 0 : parent.appendChild(newElement);
+        const range = (_e = window.getSelection()) === null || _e === void 0 ? void 0 : _e.getRangeAt(0);
+        range ? range.insertNode(newElement) : parent === null || parent === void 0 ? void 0 : parent.appendChild(newElement);
         newElement.innerHTML = "&nbsp;";
         console.log(newElement);
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`];
@@ -214,19 +215,12 @@ class InsertEditor {
         console.log((_m = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _m === void 0 ? void 0 : _m.nodeName, TAG);
         //this is to reverse currenct state i.e from bold to unbold
         if (((_p = (_o = highlightedNode === null || highlightedNode === void 0 ? void 0 : highlightedNode.parentNode) === null || _o === void 0 ? void 0 : _o.nodeName) === null || _p === void 0 ? void 0 : _p.toLowerCase()) == this.getNodeTag(NodeType).toLowerCase()) {
-            // if(highlightedNode?.nodeName?.toLowerCase() == "#text"){ parentNode?.appendChild(newElement)}
             console.log('running this now');
-            // parentNode?.parentNode?.appendChild(newElement)
             (_r = (_q = range === null || range === void 0 ? void 0 : range.commonAncestorContainer) === null || _q === void 0 ? void 0 : _q.parentElement) === null || _r === void 0 ? void 0 : _r.replaceWith(newElement);
-            // range?.surroundContents(newElement);
         }
         else {
             console.log('running');
-            // highlightedNode?.replaceWith(newElement)
-            if (range != null) {
-                // var newNode = $(`<${TAG}>  </${TAG}>`)[0];
-                range.surroundContents(newElement);
-            }
+            range === null || range === void 0 ? void 0 : range.surroundContents(newElement);
         }
         newElement.innerHTML = _text;
         this.setCaret(`#${id}`);

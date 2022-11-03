@@ -9,26 +9,35 @@ class InsertEditor {
             italic: "data-btn-italic",
             underline: "data-btn-underline",
             paragraph: "data-btn-paragraph",
+            destroy: "data-btn-destroy",
+            refresh: 'data-btn-refresh'
         };
         this.action_tags = {
             bold: 'b',
             italic: 'i',
             underline: 'u',
             paragraph: 'p',
+            destroy: '',
+            refresh: ''
         };
         this.action_status = {
             bold: false,
             italic: false,
             underline: false,
             paragraph: false,
+            destroy: false,
+            refresh: false
         };
         this.editor = document.querySelector(`[data-editor-block]`);
+        this.input = document.querySelector(`[data-editor-input]`);
         this.action_has_on_off = ['bold', 'italic', 'underline'].map(v => v.toLowerCase());
         this.action_buttons = {
             bold: document.querySelector(`[${this.button_selectors.bold}]`),
             italic: document.querySelector(`[${this.button_selectors.italic}]`),
             underline: document.querySelector(`[${this.button_selectors.underline}]`),
             paragraph: document.querySelector(`[${this.button_selectors.paragraph}]`),
+            destroy: document.querySelector(`[${this.button_selectors.destroy}]`),
+            refresh: document.querySelector(`[${this.button_selectors.refresh}]`)
         };
         if (settings.editor_class)
             this.frame = document.querySelector(`.${settings.editor_class}`);
@@ -37,6 +46,16 @@ class InsertEditor {
         if (!this.frame)
             throw new Error('No Editor Found');
         this.settings = Object.assign(Object.assign({}, this.settings), settings);
+    }
+    refresh() {
+        return this.printEditorHTML();
+    }
+    delete() {
+        var _a;
+        const clone = this.frame;
+        (_a = this.frame) === null || _a === void 0 ? void 0 : _a.remove();
+        this.frame = clone;
+        return this;
     }
     printEditorHTML() {
         let html = !this.frame ? null : this.frame.innerHTML =
@@ -69,13 +88,14 @@ class InsertEditor {
             <button type="button" title="italic" class="fa fa-italic" aria-hidden="true" ${this.button_selectors.italic} data-info="italic"></button>
             <button type="button" title="underline" class="fa fa-underline" aria-hidden="true" ${this.button_selectors.underline} data-info="underline"></button>
             <button type="button" title="new paragraph" class="fa fa-paragraph" aria-hidden="true" ${this.button_selectors.paragraph} data-info="paragraph"></button>
+            <button type="button" title="new paragraph" class="fa fa-refresh" aria-hidden="true" ${this.button_selectors.refresh} data-info="Refresh Editor"></button>
             <button type="button" title="align left" class="fa fa-align-left" aria-hidden="true" data-btn-align="left" data-info="text-align:left"></button>
             <button type="button" class="fa fa-align-right" aria-hidden="true" data-btn-align="right" data-info="text-align:right"></button>
             <button type="button" class="fa fa-align-center" aria-hidden="true" data-btn-align="center" data-info="text-align:center"></button>
             <button type="button" class="fa fa-list-ul" aria-hidden="true" data-btn-list="ul"  data-info="list:unordered"></button>
             <button type="button" class="fa fa-list-ol" aria-hidden="true" data-btn-list="ol" data-info="list:ordered"></button>
             <button type="button" class="fa fa-table" aria-hidden="true" data-btn-table data-info="table"></button>
-            <input type="color" data-btn-color value="#000000" />
+            <input type="color" data-btn-color value="#000000"/>
             </div>
             <!-- The editor -->
             <style>
@@ -85,7 +105,7 @@ class InsertEditor {
                 
             </div>
             <!-- this is the input tag required for your form upload. it carries the data in the editor -->
-            <input type="text" value="" style="visibility:hidden" name="${this.form_name || ''}" />
+            <input type="text" value="" style="visibility:hidden" name="${this.form_name || ''}" data-editor-input />
             </div>
         `;
         return this.assignActionButton()
@@ -94,19 +114,29 @@ class InsertEditor {
     }
     assignActionButton() {
         this.editor = document.querySelector(`[data-editor-block]`);
-        this.action_buttons = {
-            bold: document.querySelector(`[${this.button_selectors.bold}]`),
-            italic: document.querySelector(`[${this.button_selectors.italic}]`),
-            underline: document.querySelector(`[${this.button_selectors.underline}]`),
-            paragraph: document.querySelector(`[${this.button_selectors.paragraph}]`),
-        };
+        this.input = document.querySelector(`[data-editor-input]`);
+        this.action_buttons = Object.assign(Object.assign({}, this.action_buttons), { bold: document.querySelector(`[${this.button_selectors.bold}]`), italic: document.querySelector(`[${this.button_selectors.italic}]`), underline: document.querySelector(`[${this.button_selectors.underline}]`), paragraph: document.querySelector(`[${this.button_selectors.paragraph}]`), destroy: document.querySelector(`[${this.button_selectors.destroy}]`), refresh: document.querySelector(`[${this.button_selectors.refresh}]`) });
         return this;
     }
+    setDeleteButton(Element_) {
+        let element;
+        if (Element_ != typeof Element) {
+            element = document.querySelector(Element_);
+        }
+        else {
+            element = Element_;
+        }
+        this.action_buttons = Object.assign(Object.assign({}, this.action_buttons), { destroy: element });
+        return this.addEventListners();
+    }
     addEventListners() {
-        return this.setBoldListners()
-            .setItalicListners()
+        return this.setBoldListner()
+            .setItalicListner()
             .setUnderlineListners()
-            .setParagraphListners();
+            .setParagraphListners()
+            .setDestroyListners()
+            .setRefreshListners()
+            .saveToInputListner();
     }
     setCaret(selector) {
         var _a, _b;
@@ -138,7 +168,7 @@ class InsertEditor {
             currentNodeActive = this.editor;
         return currentNodeActive;
     }
-    setBoldListners() {
+    setBoldListner() {
         var _a;
         (_a = this.action_buttons.bold) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
             console.log("I am bold");
@@ -146,7 +176,32 @@ class InsertEditor {
         });
         return this;
     }
-    setItalicListners() {
+    saveToInputListner() {
+        var _a;
+        (_a = this.editor) === null || _a === void 0 ? void 0 : _a.addEventListener('input', () => {
+            return this.updateInput();
+        });
+        return this;
+    }
+    setDestroyListners() {
+        var _a;
+        (_a = this.action_buttons.destroy) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+            console.log("Destroyed! thanks for using Insert Editor");
+            this.delete();
+        });
+        return this;
+    }
+    setRefreshListners() {
+        var _a;
+        (_a = this.action_buttons.refresh) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+            console.log("Refresh Start");
+            console.time("Refresh Ended");
+            this.refresh();
+            console.timeEnd("Refresh Ended");
+        });
+        return this;
+    }
+    setItalicListner() {
         var _a;
         (_a = this.action_buttons.italic) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
             console.log("I am Italic");
@@ -199,7 +254,7 @@ class InsertEditor {
         newElement.innerHTML = "&nbsp;";
         console.log(newElement);
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`];
-        return this.setCaret(`#${id}`).turnButton(NodeType);
+        return this.updateInput().setCaret(`#${id}`).turnButton(NodeType);
     }
     handleHighlighted(NodeType) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
@@ -224,7 +279,7 @@ class InsertEditor {
             range === null || range === void 0 ? void 0 : range.surroundContents(newElement);
         }
         newElement.innerHTML = _text;
-        this.setCaret(`#${id}`);
+        this.updateInput().setCaret(`#${id}`);
     }
     turnButton(NodeType) {
         let bg_color = this.action_status[`${NodeType}`] ? '#554' : '#f0f0f0';
@@ -236,6 +291,11 @@ class InsertEditor {
             color:${text_color}
         `);
     }
+    updateInput() {
+        var _a, _b, _c;
+        (_a = this.input) === null || _a === void 0 ? void 0 : _a.setAttribute("value", (_c = (_b = this.editor) === null || _b === void 0 ? void 0 : _b.innerHTML) !== null && _c !== void 0 ? _c : '');
+        return this;
+    }
     addStyle(domElement, style) {
         console.log(style);
         domElement === null || domElement === void 0 ? void 0 : domElement.setAttribute('style', style);
@@ -246,3 +306,6 @@ class InsertEditor {
     }
 }
 export { InsertEditor };
+function elseif(arg0) {
+    throw new Error("Function not implemented.");
+}

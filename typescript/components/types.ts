@@ -5,10 +5,12 @@ export type EditorSettings = {
 
 
 export type action_buttons<Type> = {
+    refresh: Type|null
     bold: Type
     italic: Type
     underline: Type,
     paragraph: Type,
+    destroy:Type
 
 }
 

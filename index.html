@@ -9,6 +9,7 @@
 	<div data-editor-frame data-editor-formname="body">
 	</div>
 	<button type="submit">Submit</button>
+	<button id="deleteEditor" type="button">end</button>
 </form>
     
     
@@ -17,9 +18,12 @@
 <!-- <script type="module" src="insert/index.js"></script> -->
 <script type="module">
 	import {InsertEditor} from "./out/index.js"
-	const newEditor = new InsertEditor({})
+	const newEditor = new InsertEditor({
+		form_name:'body'
+	})
 	// console.log(newEditor)
 	newEditor.printEditorHTML()
+	.setDeleteButton("#deleteEditor")
 </script>
 
 </body>

@@ -119,15 +119,8 @@ class InsertEditor {
         return this;
     }
     setDeleteButton(Element_) {
-        let element;
-        if (Element_ != typeof Element) {
-            element = document.querySelector(Element_);
-        }
-        else {
-            element = Element_;
-        }
-        this.action_buttons = Object.assign(Object.assign({}, this.action_buttons), { destroy: element });
-        return this.addEventListners();
+        this.action_buttons = Object.assign(Object.assign({}, this.action_buttons), { destroy: document.querySelector(Element_) });
+        return this.setDestroyListners();
     }
     addEventListners() {
         return this.setBoldListner()
@@ -235,6 +228,7 @@ class InsertEditor {
         if (highlighted) {
             return this.handleHighlighted(NodeType);
         }
+        console.log('hope here is the problem');
         if (this.action_status[`${NodeType}`])
             TAG = "span".toLowerCase();
         const newElement = document.createElement(TAG), id = `${TAG}${new Date().valueOf()}`.toLowerCase();
@@ -254,10 +248,11 @@ class InsertEditor {
         newElement.innerHTML = "&nbsp;";
         console.log(newElement);
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`];
-        return this.updateInput().setCaret(`#${id}`).turnButton(NodeType);
+        return this.updateInput().turnButton(NodeType).setCaret(`#${id}`);
     }
     handleHighlighted(NodeType) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        console.log('highlighting');
         let TAG = this.getNodeTag(NodeType).toLowerCase();
         let parentNode = (_b = (_a = window.getSelection()) === null || _a === void 0 ? void 0 : _a.anchorNode) === null || _b === void 0 ? void 0 : _b.parentNode;
         let highlightedNode = (_c = window.getSelection()) === null || _c === void 0 ? void 0 : _c.anchorNode;
@@ -284,6 +279,7 @@ class InsertEditor {
     turnButton(NodeType) {
         let bg_color = this.action_status[`${NodeType}`] ? '#554' : '#f0f0f0';
         let text_color = this.action_status[`${NodeType}`] ? '#f0f0f0' : '#554';
+        console.log(NodeType);
         if (!this.action_has_on_off.includes(NodeType.toLowerCase()))
             return this;
         return this.addStyle(this.action_buttons[`${NodeType}`], `
@@ -306,6 +302,3 @@ class InsertEditor {
     }
 }
 export { InsertEditor };
-function elseif(arg0) {
-    throw new Error("Function not implemented.");
-}

@@ -130,16 +130,9 @@ class InsertEditor{
         }
         return this;
     }
-    setDeleteButton(Element_: string | Element){
-        let element :Element|null 
-        if(Element_  != typeof Element){
-            element = document.querySelector(Element_)
-        }
-        else{
-            element = Element_
-        }
-        this.action_buttons   = {...this.action_buttons, destroy:element}
-        return this.addEventListners()
+    setDeleteButton(Element_: string){
+        this.action_buttons   = {...this.action_buttons, destroy:document.querySelector(Element_) }
+        return this.setDestroyListners()
     }
     
     addEventListners(){
@@ -244,6 +237,7 @@ class InsertEditor{
         if(highlighted){
             return this.handleHighlighted(NodeType)
         }
+        console.log('hope here is the problem')
         if(this.action_status[`${NodeType}`]) TAG = "span".toLowerCase()
         const newElement : Element = document.createElement(TAG),
         id =  `${TAG}${new Date().valueOf()}`.toLowerCase()
@@ -263,12 +257,13 @@ class InsertEditor{
         newElement.innerHTML = "&nbsp;";
         console.log(newElement)
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`]
-        return this.updateInput().setCaret(`#${id}`).turnButton(NodeType)
+        return this.updateInput().turnButton(NodeType).setCaret(`#${id}`)
         
         
     }
 
     handleHighlighted(NodeType: element_tagName) {
+        console.log('highlighting')
         let TAG = this.getNodeTag(NodeType).toLowerCase()
         let parentNode = window.getSelection()?.anchorNode?.parentNode
         let highlightedNode : HTMLElement|Node|null|undefined = window.getSelection()?.anchorNode  
@@ -295,6 +290,7 @@ class InsertEditor{
     private turnButton(NodeType: element_tagName){
         let bg_color = this.action_status[`${NodeType}`] ? '#554' : '#f0f0f0'
         let text_color = this.action_status[`${NodeType}`] ? '#f0f0f0' : '#554' 
+        console.log(NodeType)
         if(!this.action_has_on_off.includes(NodeType.toLowerCase())) return this
         return this.addStyle(this.action_buttons[`${NodeType}`], `
             background:${bg_color};
@@ -322,6 +318,4 @@ class InsertEditor{
 
 export {InsertEditor}
 
-function elseif(arg0: boolean) {
-    throw new Error("Function not implemented.");
-}
+

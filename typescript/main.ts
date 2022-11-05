@@ -169,8 +169,8 @@ class InsertEditor{
         }
     }
 
-    private getCurrentNode(): Element|null{
-        let currentNodeActive : Element|null = window.getSelection()?.anchorNode?.parentElement ?? this.editor
+    private getCurrentSelectedNode(): Node|Element|null{
+        let currentNodeActive : Node|Element|null = window.getSelection()?.anchorNode ?? this.editor
         if (!this.editor?.contains(currentNodeActive)) currentNodeActive = this.editor
         return currentNodeActive
     }
@@ -231,35 +231,50 @@ class InsertEditor{
     }
     private handleNodeCreation(NodeType : element_tagName){
         let TAG = this.getNodeTag(NodeType).toLowerCase()
-        let parent: Element|null = this.getCurrentNode()
+        let parent: Element|null = this.getCurrentSelectedNode()?.parentElement ?? this.editor
+        parent = this.editor?.parentElement == parent ? this.editor : parent
         let highlighted = false
         if (window?.getSelection()?.toString().trim() !== "" || window?.getSelection()?.toString()?.trim()?.length) highlighted = true
         if(highlighted){
             return this.handleHighlighted(NodeType)
         }
-        console.log('hope here is the problem')
         if(this.action_status[`${NodeType}`]) TAG = "span".toLowerCase()
         const newElement : Element = document.createElement(TAG),
         id =  `${TAG}${new Date().valueOf()}`.toLowerCase()
         newElement.setAttribute("id", id)
         if(this.action_status[`${NodeType}`]){
-            let count = 0
-            while(parent?.tagName.toLowerCase() != TAG.toLowerCase() && count < 15){
-                console.log('trying to find parent element')
-                parent = !parent?.parentNode ? parent : parent?.parentElement
-                count++
-            }
-            if(parent?.tagName.toLowerCase() != TAG.toLowerCase() && count > 15) parent = this.editor
+            parent = this.getParentOfDiffrentType(parent, NodeType)
         }
-        const range = window.getSelection()?.getRangeAt(0)
-        range ? range.insertNode(newElement) : parent?.appendChild(newElement)
-        
+        const range = window.getSelection()?.getRangeAt(0), 
+        range_element = this.getParentOfDiffrentType(range?.commonAncestorContainer ?? null, NodeType)
+        this.action_status[`${NodeType}`] ? range?.surroundContents(newElement) : range_element?.appendChild(newElement)
+        // range && range?.commonAncestorContainer?.parentElement == this.editor ? range?.surroundContents(newElement) : parent?.appendChild(newElement)
+        // console.log(this.getParentOfDiffrentType(range.commonAncestorContainer.parentElement, NodeType))
+        console.log(range_element, range?.commonAncestorContainer, range, range_element != this.editor )
         newElement.innerHTML = "&nbsp;";
-        console.log(newElement)
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`]
         return this.updateInput().turnButton(NodeType).setCaret(`#${id}`)
         
         
+    }
+
+    getParentOfDiffrentType(parent: Element|null, NodeType: element_tagName){
+        let count = 0, to_be_returned : Element|null = parent ?? this.editor
+        console.log('NodeName => '+ to_be_returned?.nodeName.toLowerCase(), to_be_returned)
+        if('#text' == to_be_returned?.nodeName.toLowerCase()) to_be_returned = to_be_returned?.parentElement
+        console.log('NodeName => '+ to_be_returned?.nodeName.toLowerCase())
+        while(to_be_returned?.nodeName.toLowerCase() == this.getNodeTag(NodeType).toLowerCase() && count < 15 && this.editor != to_be_returned){
+                // console.log(`${parent?.nodeName.toLowerCase()} === ${this.getNodeTag(NodeType).toLowerCase()}`)
+                // console.log('trying to find parent element => ', parent?.nodeName.toLowerCase())
+                // console.log(`Are they same ? : ${this.editor != parent}`)
+                to_be_returned = !parent?.parentElement ? this.editor : parent?.parentElement
+                // console.log(`Are they same ? : ${this.editor != parent}`)
+                // console.log(`${parent?.nodeName.toLowerCase()} === ${this.getNodeTag(NodeType).toLowerCase()}`)
+                console.log(`it is to be unbold ${count}`)
+                count++
+            }
+            console.log(count, this.editor == parent, to_be_returned?.innerHTML)
+            return (to_be_returned?.nodeName.toLowerCase() == this.getNodeTag(NodeType).toLowerCase() && count > 15) ? this.editor : to_be_returned
     }
 
     handleHighlighted(NodeType: element_tagName) {

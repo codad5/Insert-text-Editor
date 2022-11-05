@@ -154,10 +154,10 @@ class InsertEditor {
             return this;
         }
     }
-    getCurrentNode() {
-        var _a, _b, _c, _d;
-        let currentNodeActive = (_c = (_b = (_a = window.getSelection()) === null || _a === void 0 ? void 0 : _a.anchorNode) === null || _b === void 0 ? void 0 : _b.parentElement) !== null && _c !== void 0 ? _c : this.editor;
-        if (!((_d = this.editor) === null || _d === void 0 ? void 0 : _d.contains(currentNodeActive)))
+    getCurrentSelectedNode() {
+        var _a, _b, _c;
+        let currentNodeActive = (_b = (_a = window.getSelection()) === null || _a === void 0 ? void 0 : _a.anchorNode) !== null && _b !== void 0 ? _b : this.editor;
+        if (!((_c = this.editor) === null || _c === void 0 ? void 0 : _c.contains(currentNodeActive)))
             currentNodeActive = this.editor;
         return currentNodeActive;
     }
@@ -219,36 +219,50 @@ class InsertEditor {
         return this;
     }
     handleNodeCreation(NodeType) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         let TAG = this.getNodeTag(NodeType).toLowerCase();
-        let parent = this.getCurrentNode();
+        let parent = (_b = (_a = this.getCurrentSelectedNode()) === null || _a === void 0 ? void 0 : _a.parentElement) !== null && _b !== void 0 ? _b : this.editor;
+        parent = ((_c = this.editor) === null || _c === void 0 ? void 0 : _c.parentElement) == parent ? this.editor : parent;
         let highlighted = false;
-        if (((_a = window === null || window === void 0 ? void 0 : window.getSelection()) === null || _a === void 0 ? void 0 : _a.toString().trim()) !== "" || ((_d = (_c = (_b = window === null || window === void 0 ? void 0 : window.getSelection()) === null || _b === void 0 ? void 0 : _b.toString()) === null || _c === void 0 ? void 0 : _c.trim()) === null || _d === void 0 ? void 0 : _d.length))
+        if (((_d = window === null || window === void 0 ? void 0 : window.getSelection()) === null || _d === void 0 ? void 0 : _d.toString().trim()) !== "" || ((_g = (_f = (_e = window === null || window === void 0 ? void 0 : window.getSelection()) === null || _e === void 0 ? void 0 : _e.toString()) === null || _f === void 0 ? void 0 : _f.trim()) === null || _g === void 0 ? void 0 : _g.length))
             highlighted = true;
         if (highlighted) {
             return this.handleHighlighted(NodeType);
         }
-        console.log('hope here is the problem');
         if (this.action_status[`${NodeType}`])
             TAG = "span".toLowerCase();
         const newElement = document.createElement(TAG), id = `${TAG}${new Date().valueOf()}`.toLowerCase();
         newElement.setAttribute("id", id);
         if (this.action_status[`${NodeType}`]) {
-            let count = 0;
-            while ((parent === null || parent === void 0 ? void 0 : parent.tagName.toLowerCase()) != TAG.toLowerCase() && count < 15) {
-                console.log('trying to find parent element');
-                parent = !(parent === null || parent === void 0 ? void 0 : parent.parentNode) ? parent : parent === null || parent === void 0 ? void 0 : parent.parentElement;
-                count++;
-            }
-            if ((parent === null || parent === void 0 ? void 0 : parent.tagName.toLowerCase()) != TAG.toLowerCase() && count > 15)
-                parent = this.editor;
+            parent = this.getParentOfDiffrentType(parent, NodeType);
         }
-        const range = (_e = window.getSelection()) === null || _e === void 0 ? void 0 : _e.getRangeAt(0);
-        range ? range.insertNode(newElement) : parent === null || parent === void 0 ? void 0 : parent.appendChild(newElement);
+        const range = (_h = window.getSelection()) === null || _h === void 0 ? void 0 : _h.getRangeAt(0), range_element = this.getParentOfDiffrentType((_j = range === null || range === void 0 ? void 0 : range.commonAncestorContainer) !== null && _j !== void 0 ? _j : null, NodeType);
+        this.action_status[`${NodeType}`] ? range === null || range === void 0 ? void 0 : range.surroundContents(newElement) : range_element === null || range_element === void 0 ? void 0 : range_element.appendChild(newElement);
+        // range && range?.commonAncestorContainer?.parentElement == this.editor ? range?.surroundContents(newElement) : parent?.appendChild(newElement)
+        // console.log(this.getParentOfDiffrentType(range.commonAncestorContainer.parentElement, NodeType))
+        console.log(range_element, range === null || range === void 0 ? void 0 : range.commonAncestorContainer, range, range_element != this.editor);
         newElement.innerHTML = "&nbsp;";
-        console.log(newElement);
         this.action_status[`${NodeType}`] = !this.action_status[`${NodeType}`];
         return this.updateInput().turnButton(NodeType).setCaret(`#${id}`);
+    }
+    getParentOfDiffrentType(parent, NodeType) {
+        let count = 0, to_be_returned = parent !== null && parent !== void 0 ? parent : this.editor;
+        console.log('NodeName => ' + (to_be_returned === null || to_be_returned === void 0 ? void 0 : to_be_returned.nodeName.toLowerCase()), to_be_returned);
+        if ('#text' == (to_be_returned === null || to_be_returned === void 0 ? void 0 : to_be_returned.nodeName.toLowerCase()))
+            to_be_returned = to_be_returned === null || to_be_returned === void 0 ? void 0 : to_be_returned.parentElement;
+        console.log('NodeName => ' + (to_be_returned === null || to_be_returned === void 0 ? void 0 : to_be_returned.nodeName.toLowerCase()));
+        while ((to_be_returned === null || to_be_returned === void 0 ? void 0 : to_be_returned.nodeName.toLowerCase()) == this.getNodeTag(NodeType).toLowerCase() && count < 15 && this.editor != to_be_returned) {
+            // console.log(`${parent?.nodeName.toLowerCase()} === ${this.getNodeTag(NodeType).toLowerCase()}`)
+            // console.log('trying to find parent element => ', parent?.nodeName.toLowerCase())
+            // console.log(`Are they same ? : ${this.editor != parent}`)
+            to_be_returned = !(parent === null || parent === void 0 ? void 0 : parent.parentElement) ? this.editor : parent === null || parent === void 0 ? void 0 : parent.parentElement;
+            // console.log(`Are they same ? : ${this.editor != parent}`)
+            // console.log(`${parent?.nodeName.toLowerCase()} === ${this.getNodeTag(NodeType).toLowerCase()}`)
+            console.log(`it is to be unbold ${count}`);
+            count++;
+        }
+        console.log(count, this.editor == parent, to_be_returned === null || to_be_returned === void 0 ? void 0 : to_be_returned.innerHTML);
+        return ((to_be_returned === null || to_be_returned === void 0 ? void 0 : to_be_returned.nodeName.toLowerCase()) == this.getNodeTag(NodeType).toLowerCase() && count > 15) ? this.editor : to_be_returned;
     }
     handleHighlighted(NodeType) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
